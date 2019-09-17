@@ -14,13 +14,13 @@
     },
     "autoload": {
         "psr-4": {
-            "MyComponent\\": "src/"
+            "Keboola\\LookerWriter\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MyComponent\\Tests\\": "tests/phpunit/",
-            "MyComponent\\FunctionalTests\\": "tests/functional/"
+            "Keboola\\LookerWriter\\Tests\\": "tests/phpunit/",
+            "Keboola\\LookerWriter\\FunctionalTests\\": "tests/functional/"
         }
     },
     "scripts": {

@@ -1,20 +1,20 @@
-# my-component
+# [Looker](https://looker.com) Writer
 
-[![Build Status](https://travis-ci.com/keboola/my-component.svg?branch=master)](https://travis-ci.com/keboola/my-component)
+[![Build Status](https://travis-ci.com/keboola/looker-writer.svg?branch=master)](https://travis-ci.com/keboola/looker-writer)
 
-> Fill in description
+> Allows user to load their data from Keboola Connection to Snowflake to use in Looker. 
 
 # Usage
 
-> fill in usage instructions
+> TBA
 
 ## Development
  
 Clone this repository and init the workspace with following command:
 
 ```
-git clone https://github.com/keboola/my-component
-cd my-component
+git clone https://github.com/keboola/looker-writer
+cd looker-writer
 docker-compose build
 docker-compose run --rm dev composer install --no-scripts
 ```
