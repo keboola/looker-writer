@@ -21,7 +21,14 @@ docker-compose run --rm dev composer install --no-scripts
 
 Run the test suite using this command:
 
+Following enviroment variables must be set:
+```dotenv
+# id of config in KBC (used id DB name)
+KBC_CONFIGID=
 ```
+
+
+```shell script
 docker-compose run --rm dev composer tests
 ```
  
