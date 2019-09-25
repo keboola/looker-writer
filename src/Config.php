@@ -8,9 +8,17 @@ use Keboola\Component\Config\BaseConfig;
 
 class Config extends BaseConfig
 {
-    // @todo implement your custom getters
-    public function getFoo(): string
+
+    /**
+     * @return string[]
+     */
+    public function getLookerCredentials(): array
     {
-        return $this->getValue(['parameters', 'foo']);
+        return $this->getValue(
+            [
+                'parameters',
+                'looker',
+            ]
+        );
     }
 }
