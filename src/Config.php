@@ -187,4 +187,28 @@ class Config extends BaseConfig
             ]
         );
     }
+
+    public function getStorageApiToken(): string
+    {
+        $token = getenv('KBC_TOKEN');
+        if (!$token) {
+            throw new LookerWriterException('KBC_TOKEN environment variable must be set');
+        }
+        return $token;
+    }
+
+    public function getStorageApiUrl(): string
+    {
+        $url = getenv('KBC_URL');
+        if (!$url) {
+            throw new LookerWriterException('KBC_URL environment variable must be set');
+        }
+        return $url;
+    }
+
+    public function getDbSchemaName(): string
+    {
+        // @todo
+        return 'TF_LOOKER_123456';
+    }
 }

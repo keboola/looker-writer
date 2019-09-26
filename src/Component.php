@@ -15,6 +15,8 @@ use Swagger\Client\Model\DBConnectionOverride;
 
 class Component extends BaseComponent
 {
+    private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
+
     /** @var AccessToken */
     private $lookerAccessToken;
 
@@ -22,6 +24,7 @@ class Component extends BaseComponent
     {
         $this->lookerApiLogin();
         $this->ensureConnectionExists();
+        $this->runWriterJob();
     }
 
     public function ensureConnectionExists(): ?DBConnection
@@ -50,6 +53,16 @@ class Component extends BaseComponent
 
         $this->getLogger()->info('Connection already exists');
         return  null;
+    }
+
+    private function runWriterJob(): void
+    {
+        $client = $this->getSyrupClient();
+        $job = $client->runJob(
+            self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE,
+            $this->getSnowflakeWriterConfigData()
+        );
+        die(var_dump($job['result']));
     }
 
     private function createDbConnectionApiObject(): DBConnection
@@ -131,5 +144,80 @@ class Component extends BaseComponent
     protected function getConfigDefinitionClass(): string
     {
         return ConfigDefinition::class;
+    }
+
+    private function getSnowflakeWriterConfigData()
+    {
+        return [
+            'configData' => [
+                'storage' => [
+                    'input' => [
+                        'tables' => [
+                            [
+                                'source' => 'in.c-lepsimisto.v1_announcement_ListByCity',
+                                'destination' => 'in.c-lepsimisto.v1_announcement_ListByCity.csv',
+                                'limit' => 50,
+                                'columns' => [],
+                                'where_values' => [],
+                                'where_operator' => 'eq',
+                            ],
+                        ],
+                        'files' => [],
+                    ],
+                ],
+                'parameters' => [
+                    'db' => [
+                        'host' => $this->getAppConfig()->getDbHost(),
+                        'database' => $this->getAppConfig()->getDbDatabase(),
+                        'user' => $this->getAppConfig()->getDbUsername(),
+                        'password' => $this->getAppConfig()->getDbPassword(),
+                        'schema' => $this->getAppConfig()->getDbSchemaName(),
+                        'warehouse' => $this->getAppConfig()->getDbWarehouse(),
+                    ],
+                    'tables' => [
+                        0 => [
+                            'tableId' => 'in.c-lepsimisto.v1_announcement_ListByCity',
+                            'dbName' => 'v1_announcement_ListByCity',
+                            'export' => true,
+                            'items' => [
+                                0 => [
+                                    'name' => 'id',
+                                    'dbName' => 'id',
+                                    'type' => 'int',
+                                    'size' => null,
+                                    'nullable' => null,
+                                    'default' => null,
+                                ],/*
+                                1 => [
+                                    'name' => 'name',
+                                    'dbName' => 'name',
+                                    'type' => 'nvarchar',
+                                    'size' => 255,
+                                    'nullable' => null,
+                                    'default' => null,
+                                ],
+                                2 => [
+                                    'name' => 'glasses',
+                                    'dbName' => 'glasses',
+                                    'type' => 'nvarchar',
+                                    'size' => 255,
+                                    'nullable' => null,
+                                    'default' => null,
+                                ],*/
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function getSyrupClient(): \Keboola\Syrup\Client
+    {
+        return new \Keboola\Syrup\Client([
+            'token' => $this->getAppConfig()->getStorageApiToken(),
+            'url' => $this->getAppConfig()->getStorageApiUrl(),
+            'super' => 'docker',
+        ]);
     }
 }

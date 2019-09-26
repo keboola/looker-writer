@@ -6,6 +6,8 @@ services:
     image: looker_writer_v2_dev
     environment:
       - KBC_CONFIGID=12345
+      - KBC_URL
+      - KBC_TOKEN
     volumes:
       - ./:/code
       - ./data:/data
