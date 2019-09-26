@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ddac4995db78277c02b80ef28c67e7a",
+    "content-hash": "9f97c39276e55a2a2c13a66bdd241da6",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -296,6 +296,47 @@
                 "keboola"
             ],
             "time": "2019-05-21T15:51:22+00:00"
+        },
+        {
+            "name": "keboola/syrup-php-client",
+            "version": "5.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/keboola/syrup-php-client.git",
+                "reference": "21341442dc993557ef75018f17ec61dac0936977"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/syrup-php-client/zipball/21341442dc993557ef75018f17ec61dac0936977",
+                "reference": "21341442dc993557ef75018f17ec61dac0936977",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3"
+            },
+            "require-dev": {
+                "monolog/monolog": "^1.24",
+                "phpunit/phpunit": "^5.7",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Keboola": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Keboola",
+                    "email": "devel@keboola.com"
+                }
+            ],
+            "description": "Keboola Syrup PHP Client",
+            "time": "2018-11-27T12:57:53+00:00"
         },
         {
             "name": "monolog/monolog",
