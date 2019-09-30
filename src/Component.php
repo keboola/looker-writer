@@ -7,6 +7,7 @@ namespace Keboola\LookerWriter;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Keboola\Component\BaseComponent;
+use Keboola\LookerWriter\Exception\LookerWriterException;
 use Swagger\Client\Api\ApiAuthApi;
 use Swagger\Client\Api\ConnectionApi;
 use Swagger\Client\Model\AccessToken;
@@ -57,12 +58,25 @@ class Component extends BaseComponent
 
     private function runWriterJob(): void
     {
+        $this->getLogger()->info('Starting the writer job');
         $client = $this->getSyrupClient();
         $job = $client->runJob(
             self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE,
             $this->getSnowflakeWriterConfigData()
         );
-        die(var_dump($job['result']));
+        if ($job['status'] === 'error') {
+            throw new LookerWriterException(sprintf(
+                'Writer job failed with following message: "%s"',
+                $job['result']['message']
+            ));
+        } elseif ($job['status'] !== 'success') {
+            throw new LookerWriterException(sprintf(
+                'Writer job failed with status "%s" and message: "%s"',
+                $job['status'],
+                $job['result']['message'] ?? 'No message'
+            ));
+        }
+        $this->getLogger()->info(sprintf('Writer job "%d" succeeded', $job['id']));
     }
 
     private function createDbConnectionApiObject(): DBConnection
@@ -146,22 +160,13 @@ class Component extends BaseComponent
         return ConfigDefinition::class;
     }
 
-    private function getSnowflakeWriterConfigData()
+    private function getSnowflakeWriterConfigData(): array
     {
         return [
             'configData' => [
                 'storage' => [
                     'input' => [
-                        'tables' => [
-                            [
-                                'source' => 'in.c-lepsimisto.v1_announcement_ListByCity',
-                                'destination' => 'in.c-lepsimisto.v1_announcement_ListByCity.csv',
-                                'limit' => 50,
-                                'columns' => [],
-                                'where_values' => [],
-                                'where_operator' => 'eq',
-                            ],
-                        ],
+                        'tables' => $this->getAppConfig()->getWriterTableConfig(),
                         'files' => [],
                     ],
                 ],
@@ -218,6 +223,7 @@ class Component extends BaseComponent
             'token' => $this->getAppConfig()->getStorageApiToken(),
             'url' => $this->getAppConfig()->getStorageApiUrl(),
             'super' => 'docker',
+            'runId' => $this->getAppConfig()->getRunId(),
         ]);
     }
 }

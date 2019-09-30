@@ -211,4 +211,27 @@ class Config extends BaseConfig
         // @todo
         return 'TF_LOOKER_123456';
     }
+
+    public function getWriterTableConfig(): array
+    {
+        return [
+            [
+                'source' => 'in.c-lepsimisto.v1_announcement_ListByCity',
+                'destination' => 'in.c-lepsimisto.v1_announcement_ListByCity.csv',
+                'limit' => 50,
+                'columns' => [],
+                'where_values' => [],
+                'where_operator' => 'eq',
+            ],
+        ];
+    }
+
+    public function getRunId(): string
+    {
+        $runId = getenv('KBC_RUNID');
+        if (!$runId) {
+            throw new LookerWriterException('KBC_RUNID environment variable must be set');
+        }
+        return $runId;
+    }
 }
