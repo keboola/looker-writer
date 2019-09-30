@@ -212,18 +212,12 @@ class Config extends BaseConfig
         return 'TF_LOOKER_123456';
     }
 
-    public function getWriterTableConfig(): array
+    public function getWriterInputMapping(): array
     {
-        return [
-            [
-                'source' => 'in.c-lepsimisto.v1_announcement_ListByCity',
-                'destination' => 'in.c-lepsimisto.v1_announcement_ListByCity.csv',
-                'limit' => 50,
-                'columns' => [],
-                'where_values' => [],
-                'where_operator' => 'eq',
-            ],
-        ];
+        return $this->getValue([
+            'storage',
+            'input',
+        ]);
     }
 
     public function getRunId(): string

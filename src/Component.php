@@ -165,10 +165,7 @@ class Component extends BaseComponent
         return [
             'configData' => [
                 'storage' => [
-                    'input' => [
-                        'tables' => $this->getAppConfig()->getWriterTableConfig(),
-                        'files' => [],
-                    ],
+                    'input' => $this->getAppConfig()->getWriterInputMapping(),
                 ],
                 'parameters' => [
                     'db' => [
