@@ -189,9 +189,26 @@ class Component extends BaseComponent
     {
         return new \Keboola\Syrup\Client([
             'token' => $this->getAppConfig()->getStorageApiToken(),
-            'url' => $this->getAppConfig()->getStorageApiUrl(),
+            'url' => $this->getSyrupUrl(),
             'super' => 'docker',
             'runId' => $this->getAppConfig()->getRunId(),
         ]);
+    }
+
+    private function getSyrupUrl(): string
+    {
+        $storageClient = new \Keboola\StorageApi\Client([
+            'token' => $this->getAppConfig()->getStorageApiToken(),
+            'url' => $this->getAppConfig()->getStorageApiUrl(),
+        ]);
+        $services = $storageClient->indexAction()['services'];
+        $serviceId = 'syrup';
+        $foundServices = array_values(array_filter($services, function ($service) use ($serviceId) {
+            return $service['id'] === $serviceId;
+        }));
+        if (empty($foundServices)) {
+            throw new LookerWriterException(sprintf('%s service not found', $serviceId));
+        }
+        return $foundServices[0]['url'];
     }
 }
