@@ -179,39 +179,7 @@ class Component extends BaseComponent
                         'schema' => $this->getAppConfig()->getDbSchemaName(),
                         'warehouse' => $this->getAppConfig()->getDbWarehouse(),
                     ],
-                    'tables' => [
-                        0 => [
-                            'tableId' => 'in.c-lepsimisto.v1_announcement_ListByCity',
-                            'dbName' => 'v1_announcement_ListByCity',
-                            'export' => true,
-                            'items' => [
-                                0 => [
-                                    'name' => 'id',
-                                    'dbName' => 'id',
-                                    'type' => 'int',
-                                    'size' => null,
-                                    'nullable' => null,
-                                    'default' => null,
-                                ],/*
-                                1 => [
-                                    'name' => 'name',
-                                    'dbName' => 'name',
-                                    'type' => 'nvarchar',
-                                    'size' => 255,
-                                    'nullable' => null,
-                                    'default' => null,
-                                ],
-                                2 => [
-                                    'name' => 'glasses',
-                                    'dbName' => 'glasses',
-                                    'type' => 'nvarchar',
-                                    'size' => 255,
-                                    'nullable' => null,
-                                    'default' => null,
-                                ],*/
-                            ],
-                        ],
-                    ],
+                    'tables' => $this->getAppConfig()->getTables(),
                 ],
             ],
         ];

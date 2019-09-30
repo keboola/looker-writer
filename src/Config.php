@@ -234,4 +234,14 @@ class Config extends BaseConfig
         }
         return $runId;
     }
+
+    public function getTables(): array
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'tables',
+            ]
+        );
+    }
 }
