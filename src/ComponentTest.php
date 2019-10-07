@@ -25,6 +25,7 @@ class ComponentTest extends TestCase
     public function testWillConnect(): void
     {
         putenv('KBC_RUNID=' . $this->client->generateRunId());
+        putenv('KBC_CONFIGID=12345');
         $component = new Component(new Logger());
         $component->execute();
     }
