@@ -1,4 +1,4 @@
-version: '2'
+version: '3.1'
 services:
   dev: &default
     build:
@@ -13,6 +13,12 @@ services:
       - ./data:/data
 
   dev-xdebug:
-    <<: *default
+    environment:
+      - KBC_CONFIGID
+      - KBC_URL
+      - KBC_TOKEN
+    volumes:
+      - ./:/code
+      - ./data:/data
     build:
       context: docker/xdebug
