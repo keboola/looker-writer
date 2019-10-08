@@ -1,7 +1,14 @@
 version: '2'
 services:
-  dev:
-    build: .
+  dev: &default
+    build:
+      context: .
+    image: looker_writer_v2_dev
     volumes:
       - ./:/code
       - ./data:/data
+
+  dev-xdebug:
+    <<: *default
+    build:
+      context: docker/xdebug
