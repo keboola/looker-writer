@@ -59,6 +59,7 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->append($this->getDbConnectionNode('db')->isRequired())
                 ->append($this->getDbConnectionNode('db_cache'))
                 ->arrayNode('looker')
+                    ->isRequired()
                     ->children()
                         ->scalarNode('credentialsId')
                             ->isRequired()

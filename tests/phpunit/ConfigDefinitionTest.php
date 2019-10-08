@@ -57,6 +57,13 @@ class ConfigDefinitionTest extends TestCase
             'The child node "host" at path "root.parameters.db_cache" must be configured.',
             $updated,
         ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['looker']);
+        yield 'Looker credentials are required' => [
+            'The child node "looker" at path "root.parameters" must be configured.',
+            $updated,
+        ];
     }
 
     public function getFullConfig(): array
