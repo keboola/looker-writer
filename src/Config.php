@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\LookerWriter;
 
+use InvalidArgumentException;
 use Keboola\Component\Config\BaseConfig;
 use Keboola\LookerWriter\Exception\LookerWriterException;
 
@@ -251,5 +252,20 @@ class Config extends BaseConfig
                 'schema',
             ]
         );
+    }
+
+    public function hasCacheConnection(): bool
+    {
+        try {
+            $this->getValue(
+                [
+                    'parameters',
+                    'db_cache',
+                ]
+            );
+            return true;
+        } catch (InvalidArgumentException $e) {
+            return false;
+        }
     }
 }

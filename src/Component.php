@@ -96,21 +96,22 @@ class Component extends BaseComponent
             )
         );
         $dbConnection->setDatabase($config->getDbDatabase());
-        $pdtContextOverride = new DBConnectionOverride();
-        $pdtContextOverride->setContext('pdt');
-        $pdtContextOverride->setHost($config->getCacheDbHost());
-        $pdtContextOverride->setUsername($config->getCacheDbUsername());
-        $pdtContextOverride->setPassword($config->getCacheDbPassword());
-        $pdtContextOverride->setJdbcAdditionalParams(
-            sprintf(
         $dbConnection->setSchema($config->getDbSchema());
+        if ($config->hasCacheConnection()) {
+            $dbConnection->setTmpDbName($config->getCacheSchema());
+            $pdtContextOverride = new DBConnectionOverride();
+            $pdtContextOverride->setContext('pdt');
+            $pdtContextOverride->setHost($config->getCacheDbHost());
+            $pdtContextOverride->setUsername($config->getCacheDbUsername());
+            $pdtContextOverride->setPassword($config->getCacheDbPassword());
+            $pdtContextOverride->setJdbcAdditionalParams(sprintf(
                 'account=%s&warehouse=%s',
                 $config->getCacheDbAccount(),
                 $config->getCacheDbWarehouse()
-            )
-        );
-        $pdtContextOverride->setDatabase($config->getCacheDbDatabase());
-        $dbConnection->setPdtContextOverride($pdtContextOverride);
+            ));
+            $pdtContextOverride->setDatabase($config->getCacheDbDatabase());
+            $dbConnection->setPdtContextOverride($pdtContextOverride);
+        }
         return $dbConnection;
     }
 
