@@ -103,6 +103,7 @@ class Component extends BaseComponent
         $pdtContextOverride->setPassword($config->getCacheDbPassword());
         $pdtContextOverride->setJdbcAdditionalParams(
             sprintf(
+        $dbConnection->setSchema($config->getDbSchema());
                 'account=%s&warehouse=%s',
                 $config->getCacheDbAccount(),
                 $config->getCacheDbWarehouse()

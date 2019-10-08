@@ -46,7 +46,6 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'db',
-                'looker',
                 'host',
             ]
         );
@@ -56,8 +55,7 @@ class Config extends BaseConfig
         return $this->getValue(
             [
                 'parameters',
-                'db',
-                'looker_cache',
+                'db_cache',
                 'host',
             ]
         );
@@ -69,7 +67,6 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'db',
-                'looker',
                 'user',
             ]
         );
@@ -79,8 +76,7 @@ class Config extends BaseConfig
         return $this->getValue(
             [
                 'parameters',
-                'db',
-                'looker_cache',
+                'db_cache',
                 'user',
             ]
         );
@@ -92,7 +88,6 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'db',
-                'looker',
                 '#password',
             ]
         );
@@ -102,8 +97,7 @@ class Config extends BaseConfig
         return $this->getValue(
             [
                 'parameters',
-                'db',
-                'looker_cache',
+                'db_cache',
                 '#password',
             ]
         );
@@ -111,25 +105,27 @@ class Config extends BaseConfig
 
     public function getDbAccount(): string
     {
-        return $this->getValue(
+        $host = $this->getValue(
             [
                 'parameters',
                 'db',
-                'looker',
-                'account',
+                'host',
             ]
         );
+        $parts = explode('.', $host, 2);
+        return $parts[0];
     }
     public function getCacheDbAccount(): string
     {
-        return $this->getValue(
+        $host = $this->getValue(
             [
                 'parameters',
-                'db',
-                'looker_cache',
-                'account',
+                'db_cache',
+                'host',
             ]
         );
+        $parts = explode('.', $host, 1);
+        return $parts[0];
     }
 
     public function getDbWarehouse(): string
@@ -138,7 +134,6 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'db',
-                'looker',
                 'warehouse',
             ]
         );
@@ -148,8 +143,7 @@ class Config extends BaseConfig
         return $this->getValue(
             [
                 'parameters',
-                'db',
-                'looker_cache',
+                'db_cache',
                 'warehouse',
             ]
         );
@@ -161,7 +155,6 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'db',
-                'looker',
                 'database',
             ]
         );
@@ -171,8 +164,7 @@ class Config extends BaseConfig
         return $this->getValue(
             [
                 'parameters',
-                'db',
-                'looker_cache',
+                'db_cache',
                 'database',
             ]
         );
@@ -235,6 +227,28 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'tables',
+            ]
+        );
+    }
+
+    public function getCacheSchema(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db_cache',
+                'schema',
+            ]
+        );
+    }
+
+    public function getDbSchema(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'schema',
             ]
         );
     }
