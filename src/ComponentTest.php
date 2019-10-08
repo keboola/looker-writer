@@ -28,5 +28,6 @@ class ComponentTest extends TestCase
         putenv('KBC_CONFIGID=12345');
         $component = new Component(new Logger());
         $component->execute();
+        $this->expectNotToPerformAssertions();
     }
 }
