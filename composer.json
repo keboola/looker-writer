@@ -1,8 +1,9 @@
 {
     "require": {
         "php": "^7.1",
-        "keboola/php-component": "^7.0.1",
+        "keboola/db-adapter-snowflake": "dev-tf-init-db-snowflake",
         "keboola/looker-api": "^6.2.10",
+        "keboola/php-component": "^7.0.1",
         "keboola/storage-api-client": "^10.9",
         "keboola/syrup-php-client": "^5.2"
     },
@@ -57,6 +58,10 @@
         {
             "type": "git",
             "url": "https://github.com/keboola/looker-api.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/keboola/db-adapter-snowflake.git"
         }
     ]
 }
