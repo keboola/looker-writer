@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedPrivateMethodInspection */
 
 declare(strict_types=1);
 
@@ -7,7 +7,9 @@ namespace Keboola\LookerWriter;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Keboola\Component\BaseComponent;
+use Keboola\Component\UserException;
 use Keboola\LookerWriter\Exception\LookerWriterException;
+use Keboola\SnowflakeDbAdapter\Connection;
 use Swagger\Client\Api\ApiAuthApi;
 use Swagger\Client\Api\ConnectionApi;
 use Swagger\Client\Model\AccessToken;
@@ -17,9 +19,31 @@ use Swagger\Client\Model\DBConnectionOverride;
 class Component extends BaseComponent
 {
     private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
+    public const ACTION_TEST_CONNECTION = 'testConnection';
 
     /** @var AccessToken */
     private $lookerAccessToken;
+
+    protected function getSyncActions(): array
+    {
+        $syncActions = parent::getSyncActions();
+        $syncActions[self::ACTION_TEST_CONNECTION] = 'handleTestConnection';
+        return $syncActions;
+    }
+
+    // phpcs:ignore SlevomatCodingStandard.Classes.UnusedPrivateElements.UnusedMethod
+    private function handleTestConnection(): array
+    {
+        try {
+            $this->testConnection();
+        } catch (\Throwable $e) {
+            throw new UserException(sprintf("Connection failed: '%s'", $e->getMessage()), 0, $e);
+        }
+
+        return [
+            'status' => 'success',
+        ];
+    }
 
     protected function run(): void
     {
@@ -159,7 +183,14 @@ class Component extends BaseComponent
 
     protected function getConfigDefinitionClass(): string
     {
-        return ConfigDefinition::class;
+        $rawConfig = $this->getRawConfig();
+        $action = $rawConfig['action'] ?? 'run';
+        switch ($action) {
+            case self::ACTION_TEST_CONNECTION:
+                return ConfigDefinition\TestConnectionDefinition::class;
+            default:
+                throw new LookerWriterException(sprintf('Unknown action "%s"', $action));
+        }
     }
 
     private function getSnowflakeWriterConfigData(): array
@@ -209,5 +240,18 @@ class Component extends BaseComponent
             throw new LookerWriterException(sprintf('%s service not found', $serviceId));
         }
         return $foundServices[0]['url'];
+    }
+
+    private function testConnection(): void
+    {
+        $db = new Connection([
+            'database' => $this->getAppConfig()->getDbDatabase(),
+            'host' => $this->getAppConfig()->getDbHost(),
+            'password' => $this->getAppConfig()->getDbPassword(),
+            'schema' => $this->getAppConfig()->getDbSchema(),
+            'user' => $this->getAppConfig()->getDbUsername(),
+            'warehouse' => $this->getAppConfig()->getDbWarehouse(),
+        ]);
+        $db->query('SELECT current_date;');
     }
 }
