@@ -201,8 +201,13 @@ class Config extends BaseConfig
 
     public function getDbSchemaName(): string
     {
-        // @todo
-        return 'TF_LOOKER_123456';
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'schema',
+            ]
+        );
     }
 
     public function getWriterInputMapping(): array
