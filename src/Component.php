@@ -10,6 +10,8 @@ use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
 use Keboola\LookerWriter\Exception\LookerWriterException;
 use Keboola\SnowflakeDbAdapter\Connection;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use Swagger\Client\Api\ApiAuthApi;
 use Swagger\Client\Api\ConnectionApi;
 use Swagger\Client\ApiException;
@@ -21,6 +23,7 @@ class Component extends BaseComponent
 {
     private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
     public const ACTION_TEST_CONNECTION = 'testConnection';
+    public const ACTION_REGISTER_TO_LOOKER = 'registerToLooker';
 
     /** @var AccessToken */
     private $lookerAccessToken;
@@ -29,6 +32,7 @@ class Component extends BaseComponent
     {
         $syncActions = parent::getSyncActions();
         $syncActions[self::ACTION_TEST_CONNECTION] = 'handleTestConnection';
+        $syncActions[self::ACTION_REGISTER_TO_LOOKER] = 'handleRegisterToLooker';
         return $syncActions;
     }
 
@@ -45,17 +49,30 @@ class Component extends BaseComponent
         ];
     }
 
+    protected function handleRegisterToLooker(): array
+    {
+        $logger = $this->getLogger();
+        if ($logger instanceof Logger) {
+            $testHandler = new TestHandler();
+            $logger->setHandlers([$testHandler]);
+        }
+        $this->ensureConnectionExists();
+        return [
+            'status' => 'success',
+            'messages' => array_map(function (array $record) {
+                return $record['message'];
+            }, $testHandler->getRecords()),
+        ];
+    }
     protected function run(): void
     {
-        $this->lookerApiLogin();
-        $this->ensureConnectionExists();
         $this->runWriterJob();
     }
 
     public function ensureConnectionExists(): ?DBConnection
     {
         $dbCredentialsClient = new ConnectionApi(
-            $this->getAuthenticatedClient($this->lookerAccessToken->getAccessToken())
+            $this->getAuthenticatedClient($this->getLookerAccessToken())
         );
         $foundConnections = array_filter(
             $dbCredentialsClient->allConnections('name'),
@@ -195,6 +212,8 @@ class Component extends BaseComponent
         switch ($action) {
             case self::ACTION_TEST_CONNECTION:
                 return ConfigDefinition\TestConnectionDefinition::class;
+            case self::ACTION_REGISTER_TO_LOOKER:
+                return ConfigDefinition\RegisterToLookerDefinition::class;
             default:
                 throw new LookerWriterException(sprintf('Unknown action "%s"', $action));
         }
@@ -260,5 +279,13 @@ class Component extends BaseComponent
             'warehouse' => $this->getAppConfig()->getDbWarehouse(),
         ]);
         $db->query('SELECT current_date;');
+    }
+
+    private function getLookerAccessToken(): string
+    {
+        if (!$this->lookerAccessToken) {
+            $this->lookerApiLogin();
+        }
+        return $this->lookerAccessToken->getAccessToken();
     }
 }
