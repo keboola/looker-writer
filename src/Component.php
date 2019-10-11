@@ -23,6 +23,7 @@ class Component extends BaseComponent
 {
     private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
     public const ACTION_TEST_CONNECTION = 'testConnection';
+    public const ACTION_REGISTER_TO_LOOKER = 'registerToLooker';
 
     /** @var AccessToken|null */
     private $lookerAccessToken;
@@ -31,6 +32,7 @@ class Component extends BaseComponent
     {
         $syncActions = parent::getSyncActions();
         $syncActions[self::ACTION_TEST_CONNECTION] = 'handleTestConnection';
+        $syncActions[self::ACTION_REGISTER_TO_LOOKER] = 'handleRegisterToLooker';
         return $syncActions;
     }
 
@@ -66,15 +68,13 @@ class Component extends BaseComponent
 
     protected function run(): void
     {
-        $this->lookerApiLogin();
-        $this->ensureConnectionExists();
         $this->runWriterJob();
     }
 
     public function ensureConnectionExists(): ?DBConnection
     {
         $dbCredentialsClient = new ConnectionApi(
-            $this->getAuthenticatedClient($this->lookerAccessToken->getAccessToken())
+            $this->getAuthenticatedClient($this->getLookerAccessToken())
         );
         $foundConnections = array_filter(
             $dbCredentialsClient->allConnections('name'),
@@ -215,6 +215,8 @@ class Component extends BaseComponent
         switch ($action) {
             case self::ACTION_TEST_CONNECTION:
                 return ConfigDefinition\TestConnectionDefinition::class;
+            case self::ACTION_REGISTER_TO_LOOKER:
+                return ConfigDefinition\RegisterToLookerDefinition::class;
             default:
                 throw new LookerWriterException(sprintf('Unknown action "%s"', $action));
         }
@@ -280,5 +282,13 @@ class Component extends BaseComponent
             'warehouse' => $this->getAppConfig()->getDbWarehouse(),
         ]);
         $db->query('SELECT current_date;');
+    }
+
+    private function getLookerAccessToken(): string
+    {
+        if (!$this->lookerAccessToken) {
+            $this->lookerApiLogin();
+        }
+        return $this->lookerAccessToken->getAccessToken();
     }
 }

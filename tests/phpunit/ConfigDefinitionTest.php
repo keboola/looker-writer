@@ -25,10 +25,6 @@ class ConfigDefinitionTest extends TestCase
     {
         $fullConfig = $this->getFullConfig();
         yield 'full config' => [$fullConfig];
-        $withoutDbCache = $fullConfig;
-
-        unset($withoutDbCache['parameters']['db_cache']);
-        yield 'db_cache is optional' => [$withoutDbCache];
     }
 
     /**
@@ -44,24 +40,32 @@ class ConfigDefinitionTest extends TestCase
     public function provideInvalidConfigs(): Generator
     {
         $fullConfig = $this->getFullConfig();
+
         $updated = $fullConfig;
-        unset($updated['parameters']['db']);
-        yield 'db is required' => [
-            'The child node "db" at path "root.parameters" must be configured.',
+        unset($updated['parameters']['tables']);
+        yield 'tables are required' => [
+            'The child node "tables" at path "root.parameters" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
-        unset($updated['parameters']['db_cache']['host']);
-        yield 'if cache present must be valid' => [
-            'The child node "host" at path "root.parameters.db_cache" must be configured.',
+        $updated['parameters']['tables'] = [];
+        yield 'tables must not be empty' => [
+            'The path "root.parameters.tables" should have at least 1 element(s) defined.',
             $updated,
         ];
 
         $updated = $fullConfig;
-        unset($updated['parameters']['looker']);
-        yield 'Looker credentials are required' => [
-            'The child node "looker" at path "root.parameters" must be configured.',
+        $updated['parameters']['tables'] = [
+            [
+                'dbName' => 'customers',
+                'export' => true,
+                'primaryKey' => [
+                ],
+            ],
+        ];
+        yield 'tables items are validated' => [
+            'The child node "tableId" at path "root.parameters.tables.0" must be configured.',
             $updated,
         ];
     }
@@ -126,27 +130,6 @@ class ConfigDefinitionTest extends TestCase
                 ],
             ],
             'parameters' => [
-                'forceUpdateConnection' => false,
-                'db' => [
-                    'host' => 'kebooladev.snowflakecomputing.com',
-                    'database' => 'TF_LOOKER_WRITER_TEMP',
-                    'user' => 'TF_LOOKER_WRITER_TEMP',
-                    '#password' => 'kdXtgC3rGwVR8uQjsAipuq7bx',
-                    'warehouse' => 'DEV',
-                    'schema' => 'TF_LOOKER_123456',
-                ],
-                'db_cache' => [
-                    'host' => 'kebooladev.snowflakecomputing.com',
-                    'database' => 'TF_LOOKER_WRITER_TEMP',
-                    'user' => 'TF_LOOKER_WRITER_TEMP',
-                    '#password' => 'kdXtgC3rGwVR8uQjsAipuq7bx',
-                    'warehouse' => 'DEV',
-                    'schema' => 'looker_scratch',
-                ],
-                'looker' => [
-                    'credentialsId' => 'nCn6YssWw3HTSwkR2Y3t',
-                    '#token' => 'hxchnB2kcjnTRHt6csY9GXXq',
-                ],
                 'tables' => [
                     [
                         'dbName' => 'customers',
