@@ -12,6 +12,7 @@ use Keboola\LookerWriter\Exception\LookerWriterException;
 use Keboola\SnowflakeDbAdapter\Connection;
 use Swagger\Client\Api\ApiAuthApi;
 use Swagger\Client\Api\ConnectionApi;
+use Swagger\Client\ApiException;
 use Swagger\Client\Model\AccessToken;
 use Swagger\Client\Model\DBConnection;
 use Swagger\Client\Model\DBConnectionOverride;
@@ -161,10 +162,17 @@ class Component extends BaseComponent
     {
         $config = $this->getAppConfig();
         $client = new ApiAuthApi();
-        $this->lookerAccessToken = $client->login(
-            $config->getLookerCredentialsId(),
-            $config->getLookerToken()
-        );
+        try {
+            $this->lookerAccessToken = $client->login(
+                $config->getLookerCredentialsId(),
+                $config->getLookerToken()
+            );
+        } catch (ApiException $e) {
+            if ($e->getCode() === 404) {
+                throw new UserException('Invalid Looker credentials');
+            }
+            throw new LookerWriterException($e->getMessage(), 0, $e);
+        }
         $this->getLogger()->info('Successfully athenticated with Looker API');
     }
 
