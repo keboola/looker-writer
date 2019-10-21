@@ -13,7 +13,8 @@ class TestConnectionDefinition extends BaseConfigDefinition
     {
         $parametersDefinition = parent::getParametersDefinition();
         $parametersDefinition
-            ->append((new Node\DbNodeDefinition('db'))->isRequired());
+            ->append((new Node\DbNodeDefinition('db'))->isRequired())
+            ->append(new ArrayNodeDefinition('tables'));
         return $parametersDefinition;
     }
 }
