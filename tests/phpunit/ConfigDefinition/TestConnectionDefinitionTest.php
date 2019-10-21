@@ -81,6 +81,7 @@ class TestConnectionDefinitionTest extends TestCase
                     'warehouse' => 'DEV',
                     'schema' => 'TF_LOOKER_123456',
                 ],
+                'tables' => [],
             ],
         ];
     }
