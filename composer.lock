@@ -313,7 +313,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/db-adapter-snowflake.git",
-                "reference": "94d72eea3cc86ad49e5fd135ef40c11acd19811c"
+                "reference": "0ed2a0a545e09d539a2a4290a479e5cdb536fa85"
             },
             "require": {
                 "ext-odbc": "*",
@@ -370,7 +370,7 @@
                     "@build"
                 ]
             },
-            "time": "2019-10-09T18:34:53+00:00"
+            "time": "2019-10-14T11:35:56+00:00"
         },
         {
             "name": "keboola/looker-api",
