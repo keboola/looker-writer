@@ -1,7 +1,7 @@
 {
     "require": {
         "php": "^7.1",
-        "keboola/db-adapter-snowflake": "dev-tf-init-db-snowflake",
+        "keboola/db-adapter-snowflake": "dev-tf-from-php-db-import",
         "keboola/looker-api": "^6.2.10",
         "keboola/php-component": "^7.0.1",
         "keboola/storage-api-client": "^10.9",
