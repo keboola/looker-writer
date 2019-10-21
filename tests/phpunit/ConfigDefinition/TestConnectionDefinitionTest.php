@@ -25,6 +25,13 @@ class TestConnectionDefinitionTest extends TestCase
     {
         $fullConfig = $this->getFullConfig();
         yield 'full config' => [$fullConfig];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['db']['#password']);
+        $updated['parameters']['db']['password'] = 'passwd';
+        yield 'unencrypted password is valid as well' => [
+            $updated,
+        ];
     }
 
     /**
@@ -44,6 +51,20 @@ class TestConnectionDefinitionTest extends TestCase
         unset($updated['parameters']['db']);
         yield 'missing db' => [
             'The child node "db" at path "root.parameters" must be configured.',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['db']['#password']);
+        yield 'only one password - no present' => [
+            'Either encrypted or plain password must be supplied',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        $updated['parameters']['db']['password'] = 'passwrd';
+        yield 'only one password - both present' => [
+            'Cannot set both encrypted and unencrypted password',
             $updated,
         ];
     }
