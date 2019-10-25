@@ -22,6 +22,7 @@ use Swagger\Client\Model\DBConnectionOverride;
 class Component extends BaseComponent
 {
     private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
+    public const ACTION_RUN = 'run';
     public const ACTION_TEST_CONNECTION = 'testConnection';
     public const ACTION_REGISTER_TO_LOOKER = 'registerToLooker';
 
@@ -217,6 +218,8 @@ class Component extends BaseComponent
                 return ConfigDefinition\TestConnectionDefinition::class;
             case self::ACTION_REGISTER_TO_LOOKER:
                 return ConfigDefinition\RegisterToLookerDefinition::class;
+            case self::ACTION_RUN:
+                return ConfigDefinition::class;
             default:
                 throw new LookerWriterException(sprintf('Unknown action "%s"', $action));
         }

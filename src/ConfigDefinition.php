@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\LookerWriter;
 
 use Keboola\Component\Config\BaseConfigDefinition;
+use Keboola\LookerWriter\ConfigDefinition\Node\DbNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class ConfigDefinition extends BaseConfigDefinition
@@ -53,6 +54,7 @@ class ConfigDefinition extends BaseConfigDefinition
         /** @noinspection NullPointerExceptionInspection */
         $parametersNode
             ->children()
+                ->append((new DbNodeDefinition('db'))->isRequired())
                 ->arrayNode('tables')
                     ->requiresAtLeastOneElement()
                     ->isRequired()
