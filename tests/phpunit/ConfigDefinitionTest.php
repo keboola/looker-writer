@@ -130,6 +130,14 @@ class ConfigDefinitionTest extends TestCase
                 ],
             ],
             'parameters' => [
+                'db' => [
+                    'host' => 'kebooladev.snowflakecomputing.com',
+                    'database' => 'TF_LOOKER_WRITER_TEMP',
+                    'user' => 'TF_LOOKER_WRITER_TEMP',
+                    '#password' => 'password',
+                    'warehouse' => 'DEV',
+                    'schema' => 'TF_LOOKER_123456',
+                ],
                 'tables' => [
                     [
                         'dbName' => 'customers',
