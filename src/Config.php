@@ -85,23 +85,46 @@ class Config extends BaseConfig
 
     public function getDbPassword(): string
     {
-        return $this->getValue(
+        $password = $this->getValue(
             [
                 'parameters',
                 'db',
                 '#password',
-            ]
+            ],
+            false
         );
+        if ($password === false) {
+            $password = $this->getValue(
+                [
+                    'parameters',
+                    'db',
+                    'password',
+                ],
+                false
+            );
+        }
+        return $password;
     }
     public function getCacheDbPassword(): string
     {
-        return $this->getValue(
+        $password = $this->getValue(
             [
                 'parameters',
                 'db_cache',
                 '#password',
-            ]
+            ],
+            false
         );
+        if ($password === false) {
+            $password = $this->getValue(
+                [
+                    'parameters',
+                    'db_cache',
+                    'password',
+                ]
+            );
+        }
+        return $password;
     }
 
     public function getDbAccount(): string

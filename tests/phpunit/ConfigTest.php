@@ -26,6 +26,66 @@ class ConfigTest extends TestCase
         $this->assertSame('kebooladev', $config->getDbAccount());
     }
 
+    public function testGetPlainPasswordCorrectly(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [
+                    'db' => [
+                        'password' => 'l33tpa$$',
+                    ],
+                ],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+        $this->assertSame('l33tpa$$', $config->getDbPassword());
+    }
+
+    public function testGetEncryptedPasswordCorrectly(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [
+                    'db' => [
+                        '#password' => 'l33tpa$$',
+                    ],
+                ],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+        $this->assertSame('l33tpa$$', $config->getDbPassword());
+    }
+
+    public function testGetPlainCacheDbPasswordCorrectly(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [
+                    'db_cache' => [
+                        'password' => 'l33tpa$$',
+                    ],
+                ],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+        $this->assertSame('l33tpa$$', $config->getCacheDbPassword());
+    }
+
+    public function testGetEncryptedCacheDbPasswordCorrectly(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [
+                    'db_cache' => [
+                        '#password' => 'l33tpa$$',
+                    ],
+                ],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+        $this->assertSame('l33tpa$$', $config->getCacheDbPassword());
+    }
+
     private function getDummyConfigDefintion(): ConfigurationInterface
     {
         return new class implements ConfigurationInterface
