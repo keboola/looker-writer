@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd3ad9e0aeadfc8cc55b642f39c46d2a",
+    "content-hash": "c788938caf5842cbe8bcf7c9a0685f6c",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -423,16 +423,16 @@
         },
         {
             "name": "keboola/php-component",
-            "version": "7.0.2",
+            "version": "dev-tf-fix-sync-action-logging",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/php-component.git",
-                "reference": "afaf9a575af727950c4e597bebf6ff54741e2fb1"
+                "reference": "4102f5e76b6febcfd98d0408df6b3ef26bc3795a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/keboola/php-component/zipball/afaf9a575af727950c4e597bebf6ff54741e2fb1",
-                "reference": "afaf9a575af727950c4e597bebf6ff54741e2fb1",
+                "url": "https://api.github.com/repos/keboola/php-component/zipball/4102f5e76b6febcfd98d0408df6b3ef26bc3795a",
+                "reference": "4102f5e76b6febcfd98d0408df6b3ef26bc3795a",
                 "shasum": ""
             },
             "require": {
@@ -474,7 +474,7 @@
                 "docker",
                 "keboola"
             ],
-            "time": "2019-05-21T15:51:22+00:00"
+            "time": "2019-10-31T11:17:57+00:00"
         },
         {
             "name": "keboola/storage-api-client",
@@ -2989,7 +2989,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "keboola/db-adapter-snowflake": 20
+        "keboola/db-adapter-snowflake": 20,
+        "keboola/php-component": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
