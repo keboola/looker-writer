@@ -57,7 +57,7 @@ class Component extends BaseComponent
             throw new LookerWriterException('Logger must allow setting handlers');
         }
         $testHandler = new TestHandler();
-        $logger->setHandlers([$testHandler]);
+        $logger->pushHandler($testHandler);
         $this->ensureConnectionExists();
         return [
             'status' => 'success',
