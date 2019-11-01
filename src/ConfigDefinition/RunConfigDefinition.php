@@ -6,6 +6,7 @@ namespace Keboola\LookerWriter\ConfigDefinition;
 
 use Keboola\Component\Config\BaseConfigDefinition;
 use Keboola\LookerWriter\ConfigDefinition\Node\DbNodeDefinition;
+use Keboola\LookerWriter\ConfigDefinition\Node\LookerNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
 class RunConfigDefinition extends BaseConfigDefinition
@@ -18,6 +19,7 @@ class RunConfigDefinition extends BaseConfigDefinition
         $parametersNode
             ->children()
                 ->append((new DbNodeDefinition('db'))->isRequired())
+                ->append(new LookerNodeDefinition())
                 ->arrayNode('tables')
                     ->requiresAtLeastOneElement()
                     ->isRequired()
