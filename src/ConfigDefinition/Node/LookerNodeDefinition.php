@@ -14,7 +14,6 @@ class LookerNodeDefinition extends ArrayNodeDefinition
         // @formatter:off
         /** @noinspection NullPointerExceptionInspection */
         $this
-            ->isRequired()
             ->children()
                 ->scalarNode('credentialsId')
                     ->isRequired()

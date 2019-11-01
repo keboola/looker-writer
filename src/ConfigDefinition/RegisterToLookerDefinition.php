@@ -19,7 +19,7 @@ class RegisterToLookerDefinition extends BaseConfigDefinition
                 ->booleanNode('forceUpdateConnection')
                     ->defaultFalse()
                 ->end()
-                ->append(new LookerNodeDefinition())
+                ->append((new LookerNodeDefinition())->isRequired())
                 ->append((new DbNodeDefinition('db'))->isRequired())
                 ->append((new DbNodeDefinition('db_cache')))
             ->end()
