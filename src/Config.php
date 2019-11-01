@@ -32,6 +32,17 @@ class Config extends BaseConfig
         );
     }
 
+    public function getLookerHost(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'looker',
+                'host',
+            ]
+        );
+    }
+
     public function getConfigId(): string
     {
         $configId = getenv('KBC_CONFIGID');
@@ -183,6 +194,7 @@ class Config extends BaseConfig
             ]
         );
     }
+
     public function getCacheDbDatabase(): string
     {
         return $this->getValue(

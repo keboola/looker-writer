@@ -16,6 +16,7 @@ use Monolog\Logger;
 use Swagger\Client\Api\ApiAuthApi;
 use Swagger\Client\Api\ConnectionApi;
 use Swagger\Client\ApiException;
+use Swagger\Client\Configuration;
 use Swagger\Client\Model\AccessToken;
 use Swagger\Client\Model\DBConnection;
 use Swagger\Client\Model\DBConnectionOverride;
@@ -76,7 +77,8 @@ class Component extends BaseComponent
     public function ensureConnectionExists(): ?DBConnection
     {
         $dbCredentialsClient = new ConnectionApi(
-            $this->getAuthenticatedClient($this->getLookerAccessToken())
+            $this->getAuthenticatedClient($this->getLookerAccessToken()),
+            $this->getLookerConfiguration($this->getAppConfig()->getLookerHost())
         );
         $foundConnections = array_filter(
             $dbCredentialsClient->allConnections('name'),
@@ -182,7 +184,7 @@ class Component extends BaseComponent
     private function lookerApiLogin(): void
     {
         $config = $this->getAppConfig();
-        $client = new ApiAuthApi();
+        $client = new ApiAuthApi(null, $this->getLookerConfiguration($config->getLookerHost()));
         try {
             $this->lookerAccessToken = $client->login(
                 $config->getLookerCredentialsId(),
@@ -294,5 +296,12 @@ class Component extends BaseComponent
             $this->lookerApiLogin();
         }
         return $this->lookerAccessToken->getAccessToken();
+    }
+
+    private function getLookerConfiguration(string $host): Configuration
+    {
+        $configuration = new Configuration();
+        $configuration->setHost($host);
+        return $configuration;
     }
 }

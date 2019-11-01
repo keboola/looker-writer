@@ -82,6 +82,7 @@ class RegisterToLookerDefinitionTest extends TestCase
                 'looker' => [
                     'credentialsId' => 'nCn6YssWw3HTSwkR2Y3t',
                     '#token' => 'hxchnB2kcjnTRHt6csY9GXXq',
+                    'host' => 'https://keboolads.api.looker.com/api/3.1',
                 ],
             ],
         ];

@@ -23,6 +23,10 @@ class LookerNodeDefinition extends ArrayNodeDefinition
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+                ->scalarNode('host')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
             ->end()
         ->end();
         // @formatter:on
