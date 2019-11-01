@@ -27,6 +27,7 @@ class Component extends BaseComponent
     public const ACTION_RUN = 'run';
     public const ACTION_TEST_CONNECTION = 'testConnection';
     public const ACTION_REGISTER_TO_LOOKER = 'registerToLooker';
+    public const ACTION_TEST_LOOKER_CREDENTIALS = 'testLookerCredentials';
 
     /** @var AccessToken|null */
     private $lookerAccessToken;
@@ -36,6 +37,7 @@ class Component extends BaseComponent
         $syncActions = parent::getSyncActions();
         $syncActions[self::ACTION_TEST_CONNECTION] = 'handleTestConnection';
         $syncActions[self::ACTION_REGISTER_TO_LOOKER] = 'handleRegisterToLooker';
+        $syncActions[self::ACTION_TEST_LOOKER_CREDENTIALS] = 'handleTestLookerCredentials';
         return $syncActions;
     }
 
@@ -61,6 +63,23 @@ class Component extends BaseComponent
         $testHandler = new TestHandler();
         $logger->pushHandler($testHandler);
         $this->ensureConnectionExists();
+        return [
+            'status' => 'success',
+            'messages' => array_map(function (array $record) {
+                return $record['message'];
+            }, $testHandler->getRecords()),
+        ];
+    }
+
+    protected function handleTestLookerCredentials(): array
+    {
+        $logger = $this->getLogger();
+        if (!$logger instanceof Logger) {
+            throw new LookerWriterException('Logger must allow setting handlers');
+        }
+        $testHandler = new TestHandler();
+        $logger->pushHandler($testHandler);
+        $this->lookerApiLogin();
         return [
             'status' => 'success',
             'messages' => array_map(function (array $record) {
@@ -221,6 +240,8 @@ class Component extends BaseComponent
                 return ConfigDefinition\TestConnectionDefinition::class;
             case self::ACTION_REGISTER_TO_LOOKER:
                 return ConfigDefinition\RegisterToLookerDefinition::class;
+            case self::ACTION_TEST_LOOKER_CREDENTIALS:
+                return ConfigDefinition\TestLookerCredentialsDefinition::class;
             case self::ACTION_RUN:
                 return RunConfigDefinition::class;
             default:
