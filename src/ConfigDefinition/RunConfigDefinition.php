@@ -19,7 +19,8 @@ class RunConfigDefinition extends BaseConfigDefinition
         $parametersNode
             ->children()
                 ->append((new DbNodeDefinition('db'))->isRequired())
-                ->append(new LookerNodeDefinition())
+                ->append(new DbNodeDefinition('db_cache'))
+                ->append((new LookerNodeDefinition())->isRequired())
                 ->arrayNode('tables')
                     ->requiresAtLeastOneElement()
                     ->isRequired()

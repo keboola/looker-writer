@@ -26,7 +26,6 @@ class Component extends BaseComponent
     private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
     public const ACTION_RUN = 'run';
     public const ACTION_TEST_CONNECTION = 'testConnection';
-    public const ACTION_REGISTER_TO_LOOKER = 'registerToLooker';
     public const ACTION_TEST_LOOKER_CREDENTIALS = 'testLookerCredentials';
 
     /** @var AccessToken|null */
@@ -36,7 +35,6 @@ class Component extends BaseComponent
     {
         $syncActions = parent::getSyncActions();
         $syncActions[self::ACTION_TEST_CONNECTION] = 'handleTestConnection';
-        $syncActions[self::ACTION_REGISTER_TO_LOOKER] = 'handleRegisterToLooker';
         $syncActions[self::ACTION_TEST_LOOKER_CREDENTIALS] = 'handleTestLookerCredentials';
         return $syncActions;
     }
@@ -51,23 +49,6 @@ class Component extends BaseComponent
 
         return [
             'status' => 'success',
-        ];
-    }
-
-    protected function handleRegisterToLooker(): array
-    {
-        $logger = $this->getLogger();
-        if (!$logger instanceof Logger) {
-            throw new LookerWriterException('Logger must allow setting handlers');
-        }
-        $testHandler = new TestHandler();
-        $logger->pushHandler($testHandler);
-        $this->ensureConnectionExists();
-        return [
-            'status' => 'success',
-            'messages' => array_map(function (array $record) {
-                return $record['message'];
-            }, $testHandler->getRecords()),
         ];
     }
 
@@ -90,6 +71,7 @@ class Component extends BaseComponent
 
     protected function run(): void
     {
+        $this->ensureConnectionExists();
         $this->runWriterJob();
     }
 
@@ -106,7 +88,10 @@ class Component extends BaseComponent
             }
         );
         if (count($foundConnections) === 0) {
-            $this->getLogger()->info('Creating connection');
+            $this->getLogger()->info(sprintf(
+                'Creating DB connection in Looker "%s"',
+                $this->getLookerConnectionName()
+            ));
             return $dbCredentialsClient->createConnection($this->createDbConnectionApiObject());
         }
 
@@ -118,7 +103,10 @@ class Component extends BaseComponent
             );
         }
 
-        $this->getLogger()->info('Connection already exists');
+        $this->getLogger()->info(sprintf(
+            'Connection "%s" already exists in Looker',
+            $this->getLookerConnectionName()
+        ));
         return  null;
     }
 
@@ -143,6 +131,10 @@ class Component extends BaseComponent
             ));
         }
         $this->getLogger()->info(sprintf('Writer job "%d" succeeded', $job['id']));
+        $this->getLogger()->info(sprintf(
+            'Data has been written to schema assigned to Looker DB Connection "%s"',
+            $this->getLookerConnectionName()
+        ));
     }
 
     private function createDbConnectionApiObject(): DBConnection
@@ -238,8 +230,6 @@ class Component extends BaseComponent
         switch ($action) {
             case self::ACTION_TEST_CONNECTION:
                 return ConfigDefinition\TestConnectionDefinition::class;
-            case self::ACTION_REGISTER_TO_LOOKER:
-                return ConfigDefinition\RegisterToLookerDefinition::class;
             case self::ACTION_TEST_LOOKER_CREDENTIALS:
                 return ConfigDefinition\TestLookerCredentialsDefinition::class;
             case self::ACTION_RUN:
@@ -304,11 +294,10 @@ class Component extends BaseComponent
             'database' => $this->getAppConfig()->getDbDatabase(),
             'host' => $this->getAppConfig()->getDbHost(),
             'password' => $this->getAppConfig()->getDbPassword(),
-            'schema' => $this->getAppConfig()->getDbSchema(),
             'user' => $this->getAppConfig()->getDbUsername(),
             'warehouse' => $this->getAppConfig()->getDbWarehouse(),
         ]);
-        $db->query('SELECT current_date;');
+        $db->query('USE SCHEMA ' . $db->quoteIdentifier($this->getAppConfig()->getDbSchema()));
     }
 
     private function getLookerAccessToken(): string

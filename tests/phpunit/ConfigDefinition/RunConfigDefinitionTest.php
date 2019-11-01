@@ -25,6 +25,10 @@ class RunConfigDefinitionTest extends TestCase
     {
         $fullConfig = $this->getFullConfig();
         yield 'full config' => [$fullConfig];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['db_cache']);
+        yield 'db_cache is not required' => [$updated];
     }
 
     /**
@@ -45,6 +49,20 @@ class RunConfigDefinitionTest extends TestCase
         unset($updated['parameters']['tables']);
         yield 'tables are required' => [
             'The child node "tables" at path "root.parameters" must be configured.',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['looker']);
+        yield 'looker is required' => [
+            'The child node "looker" at path "root.parameters" must be configured.',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['db']);
+        yield 'db is required' => [
+            'The child node "db" at path "root.parameters" must be configured.',
             $updated,
         ];
 
@@ -137,6 +155,19 @@ class RunConfigDefinitionTest extends TestCase
                     '#password' => 'password',
                     'warehouse' => 'DEV',
                     'schema' => 'TF_LOOKER_123456',
+                ],
+                'db_cache' => [
+                    'host' => 'kebooladev.snowflakecomputing.com',
+                    'database' => 'TF_LOOKER_WRITER_TEMP',
+                    'user' => 'TF_LOOKER_WRITER_TEMP',
+                    '#password' => 'password',
+                    'warehouse' => 'DEV',
+                    'schema' => 'TF_LOOKER_123456',
+                ],
+                'looker' => [
+                    'credentialsId' => 'nCn6YssWw3HTSwkR2Y3t',
+                    '#token' => 'hxchnB2kcjnTRHt6csY9GXXq',
+                    'host' => 'https://keboolads.api.looker.com/api/3.1',
                 ],
                 'tables' => [
                     [
