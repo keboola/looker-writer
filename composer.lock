@@ -374,11 +374,11 @@
         },
         {
             "name": "keboola/looker-api",
-            "version": "6.20.10",
+            "version": "6.20.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/looker-api.git",
-                "reference": "8f5500a9d6e4b6f097c48ada878ce35d6dc95a89"
+                "reference": "c5a059cc54f3e0c434fa1be429a9953c2f616632"
             },
             "require": {
                 "ext-curl": "*",
@@ -419,7 +419,7 @@
                 "sdk",
                 "swagger"
             ],
-            "time": "2019-10-03T12:58:02+00:00"
+            "time": "2019-11-01T17:01:26+00:00"
         },
         {
             "name": "keboola/php-component",
