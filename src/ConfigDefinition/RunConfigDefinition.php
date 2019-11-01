@@ -2,51 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Keboola\LookerWriter;
+namespace Keboola\LookerWriter\ConfigDefinition;
 
 use Keboola\Component\Config\BaseConfigDefinition;
 use Keboola\LookerWriter\ConfigDefinition\Node\DbNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 
-class ConfigDefinition extends BaseConfigDefinition
+class RunConfigDefinition extends BaseConfigDefinition
 {
-    public function getDbConnectionNode(string $nodeName): ArrayNodeDefinition
-    {
-        $dbNode = new ArrayNodeDefinition($nodeName);
-        // @formatter:off
-        /** @noinspection NullPointerExceptionInspection */
-        $dbNode
-            ->children()
-                ->scalarNode('driver')->end() // ignored, but supplied by UI
-                ->scalarNode('host')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('port')->end()
-                ->scalarNode('warehouse')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('database')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('schema')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('user')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-                ->scalarNode('#password')
-                    ->isRequired()
-                    ->cannotBeEmpty()
-                ->end()
-            ->end();
-        // @formatter:on
-        return $dbNode;
-    }
     protected function getParametersDefinition(): ArrayNodeDefinition
     {
         $parametersNode = parent::getParametersDefinition();

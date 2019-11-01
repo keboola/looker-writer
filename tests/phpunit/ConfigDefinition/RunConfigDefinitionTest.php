@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Keboola\LookerWriter\Tests;
+namespace Keboola\LookerWriter\Tests\ConfigDefinition;
 
 use Generator;
 use Keboola\LookerWriter\Config;
-use Keboola\LookerWriter\ConfigDefinition;
+use Keboola\LookerWriter\ConfigDefinition\RunConfigDefinition;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class ConfigDefinitionTest extends TestCase
+class RunConfigDefinitionTest extends TestCase
 {
     /**
      * @dataProvider provideValidConfigs
      */
     public function testValidConfig(array $rawConfig): void
     {
-        $config = new Config($rawConfig, new ConfigDefinition());
+        $config = new Config($rawConfig, new RunConfigDefinition());
         $this->assertInstanceOf(Config::class, $config);
     }
 
@@ -34,7 +34,7 @@ class ConfigDefinitionTest extends TestCase
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage($expectedExceptionMessage);
-        $config = new Config($rawConfig, new ConfigDefinition());
+        $config = new Config($rawConfig, new RunConfigDefinition());
     }
 
     public function provideInvalidConfigs(): Generator

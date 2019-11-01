@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
+use Keboola\LookerWriter\ConfigDefinition\RunConfigDefinition;
 use Keboola\LookerWriter\Exception\LookerWriterException;
 use Keboola\SnowflakeDbAdapter\Connection;
 use Monolog\Handler\TestHandler;
@@ -219,7 +220,7 @@ class Component extends BaseComponent
             case self::ACTION_REGISTER_TO_LOOKER:
                 return ConfigDefinition\RegisterToLookerDefinition::class;
             case self::ACTION_RUN:
-                return ConfigDefinition::class;
+                return RunConfigDefinition::class;
             default:
                 throw new LookerWriterException(sprintf('Unknown action "%s"', $action));
         }
