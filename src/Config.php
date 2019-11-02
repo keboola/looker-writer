@@ -206,16 +206,6 @@ class Config extends BaseConfig
         );
     }
 
-    public function isForceUpdateConnection(): bool
-    {
-        return $this->getValue(
-            [
-                'parameters',
-                'forceUpdateConnection',
-            ]
-        );
-    }
-
     public function getStorageApiToken(): string
     {
         $token = getenv('KBC_TOKEN');

@@ -95,14 +95,6 @@ class Component extends BaseComponent
             return $dbCredentialsClient->createConnection($this->createDbConnectionApiObject());
         }
 
-        if ($this->getAppConfig()->isForceUpdateConnection()) {
-            $this->getLogger()->info('Forced connection update is in effect, updating');
-            return $dbCredentialsClient->updateConnection(
-                $this->getLookerConnectionName(),
-                $this->createDbConnectionApiObject()
-            );
-        }
-
         $this->getLogger()->info(sprintf(
             'Connection "%s" already exists in Looker',
             $this->getLookerConnectionName()
