@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "46141a1dd98ac2d2e3b145c899cb805f",
+    "content-hash": "856b15a990ec5934b8f38fca13590fd1",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -309,11 +309,17 @@
         },
         {
             "name": "keboola/db-adapter-snowflake",
-            "version": "dev-tf-from-php-db-import",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/keboola/db-adapter-snowflake.git",
-                "reference": "75222a7e3ed44ef77adc3a9a3e220d16a98444d7"
+                "reference": "e93bc8eab03eb61bf3320b1ff3ef7159bc1e285b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/db-adapter-snowflake/zipball/e93bc8eab03eb61bf3320b1ff3ef7159bc1e285b",
+                "reference": "e93bc8eab03eb61bf3320b1ff3ef7159bc1e285b",
+                "shasum": ""
             },
             "require": {
                 "ext-odbc": "*",
@@ -334,43 +340,11 @@
                     "Keboola\\SnowflakeDbAdapter\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Keboola\\SnowflakeDbAdapter\\Tests\\": "tests/phpunit/",
-                    "Keboola\\SnowflakeDbAdapter\\FunctionalTests\\": "tests/functional/"
-                }
-            },
-            "scripts": {
-                "tests-phpunit": [
-                    "phpunit"
-                ],
-                "tests": [
-                    "@tests-phpunit"
-                ],
-                "phpstan": [
-                    "phpstan analyse ./src ./tests --level=max --no-progress -c phpstan.neon"
-                ],
-                "phpcs": [
-                    "phpcs -n --ignore=vendor --extensions=php ."
-                ],
-                "phpcbf": [
-                    "phpcbf -n --ignore=vendor --extensions=php ."
-                ],
-                "phplint": [
-                    "parallel-lint -j 10 --exclude vendor ."
-                ],
-                "build": [
-                    "@phplint",
-                    "@phpcs",
-                    "@phpstan",
-                    "@tests"
-                ],
-                "ci": [
-                    "@composer validate --no-check-publish --no-check-all",
-                    "@build"
-                ]
-            },
-            "time": "2019-11-01T10:17:17+00:00"
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "time": "2019-11-12T13:30:30+00:00"
         },
         {
             "name": "keboola/looker-api",
@@ -379,6 +353,12 @@
                 "type": "git",
                 "url": "https://github.com/keboola/looker-api.git",
                 "reference": "c5a059cc54f3e0c434fa1be429a9953c2f616632"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/keboola/looker-api/zipball/c5a059cc54f3e0c434fa1be429a9953c2f616632",
+                "reference": "c5a059cc54f3e0c434fa1be429a9953c2f616632",
+                "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
@@ -2988,9 +2968,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "keboola/db-adapter-snowflake": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
