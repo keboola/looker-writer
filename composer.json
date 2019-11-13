@@ -53,11 +53,5 @@
     "config": {
         "sort-packages": true,
         "optimize-autoloader": true
-    },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/keboola/looker-api.git"
-        }
-    ]
+    }
 }
