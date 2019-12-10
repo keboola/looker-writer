@@ -5,6 +5,7 @@ services:
       context: .
     image: looker_writer_v2_dev
     environment:
+      - KBC_RUNID
       - KBC_CONFIGID
       - KBC_URL
       - KBC_TOKEN
