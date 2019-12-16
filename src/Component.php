@@ -253,8 +253,9 @@ class Component extends BaseComponent
             ],
         ];
 
-        if (getenv('KBC_RUNID')) {
-            $configData['configData']['parameters']['db']['runId'] = (string) getenv('KBC_RUNID');
+        $runId = $this->getAppConfig()->getRunId();
+        if ($runId) {
+            $configData['configData']['parameters']['db']['runId'] = $runId;
         }
 
         return $configData;
