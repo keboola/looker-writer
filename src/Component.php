@@ -234,7 +234,7 @@ class Component extends BaseComponent
 
     private function getSnowflakeWriterConfigData(): array
     {
-        return [
+        $configData = [
             'configData' => [
                 'storage' => [
                     'input' => $this->getAppConfig()->getWriterInputMapping(),
@@ -252,6 +252,13 @@ class Component extends BaseComponent
                 ],
             ],
         ];
+
+        $runId = $this->getAppConfig()->getRunId();
+        if ($runId) {
+            $configData['configData']['parameters']['db']['runId'] = $runId;
+        }
+
+        return $configData;
     }
 
     private function getSyrupClient(): \Keboola\Syrup\Client
