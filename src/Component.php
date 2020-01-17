@@ -198,6 +198,9 @@ class Component extends BaseComponent
             if ($e->getCode() === 404) {
                 throw new UserException('Invalid Looker credentials');
             }
+            if ($e->getCode() === 502) {
+                throw new UserException('Invalid Looker URL host');
+            }
             // intentionally throw away exception as it leaks credentials in message
             throw new LookerWriterException('Login to Looker API failed');
         }
