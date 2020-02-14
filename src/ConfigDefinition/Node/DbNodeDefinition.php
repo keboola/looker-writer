@@ -46,6 +46,20 @@ class DbNodeDefinition extends ArrayNodeDefinition
                 ->scalarNode('database')
                     ->isRequired()
                     ->cannotBeEmpty()
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            if (!$v) {
+                                return false;
+                            }
+                            // looker does not use quoted identifiers
+                            // https://docs.snowflake.net/manuals/sql-reference/identifiers-syntax.html#identifier-requirements
+                            return !self::isValidSnowflakeUnquotedIdentifier($v);
+                        })
+                        ->thenInvalid(
+                            'Database name %s is not a valid unquoted Snowflake indentifier and will not '
+                            . 'work with Looker.'
+                        )
+                    ->end()
                 ->end()
                 ->scalarNode('schema')
                     ->isRequired()
@@ -63,5 +77,23 @@ class DbNodeDefinition extends ArrayNodeDefinition
                 ->end()
             ->end();
         // @formatter:on
+    }
+
+    public static function isValidSnowflakeUnquotedIdentifier(string $identifier): bool
+    {
+        // based on https://docs.snowflake.net/manuals/sql-reference/identifiers-syntax.html#identifier-requirements
+        $regex = '/^[A-Za-z_][A-Za-z0-9\$_]*$/';
+
+        if (preg_match($regex, $identifier) === 0) {
+            // does not match unquoted identifier as defined in docs
+            return false;
+        }
+
+        if (strtoupper($identifier) !== $identifier) {
+            // would be changed by uppercasing by SNFLK
+            return false;
+        };
+
+        return true;
     }
 }

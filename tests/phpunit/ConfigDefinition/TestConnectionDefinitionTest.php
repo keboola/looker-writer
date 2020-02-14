@@ -67,6 +67,14 @@ class TestConnectionDefinitionTest extends TestCase
             'Cannot set both encrypted and unencrypted password',
             $updated,
         ];
+
+        $updated = $fullConfig;
+        $updated['parameters']['db']['database'] = strtolower($updated['parameters']['db']['database']);
+        yield 'database is lowercase' => [
+            'Invalid configuration for path "root.parameters.db.database": Database name "tf_looker_writer_temp" is not'
+            . ' a valid unquoted Snowflake indentifier and will not work with Looker.',
+            $updated,
+        ];
     }
 
     public function getFullConfig(): array
