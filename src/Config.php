@@ -57,12 +57,12 @@ class Config extends BaseConfig
         $connectionName = $this->getValue(
             [
                 'parameters',
-                'connectionName'
+                'connectionName',
             ],
             false
         );
 
-        if (!$connectionName){
+        if (!$connectionName) {
             return null;
         }
 
