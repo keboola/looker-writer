@@ -88,6 +88,30 @@ class ConfigTest extends TestCase
         $this->assertSame(self::TEST_PASSWORD, $config->getCacheDbPassword());
     }
 
+    public function testGetConnectionName(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [
+                    'connectionName' => 'test-connection-name',
+                ],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+        $this->assertSame('test-connection-name', $config->getConnectionName());
+    }
+
+    public function testGetEmptyConnectionName(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+        $this->assertNull($config->getConnectionName());
+    }
+
     private function getDummyConfigDefintion(): ConfigurationInterface
     {
         return new class implements ConfigurationInterface
