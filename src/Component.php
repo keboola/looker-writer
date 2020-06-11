@@ -182,10 +182,10 @@ class Component extends BaseComponent
 
     private function getLookerConnectionName(): string
     {
-        return sprintf(
+        return strtolower(sprintf(
             'wr_looker_%s',
             $this->getAppConfig()->getConnectionName() ?? $this->getAppConfig()->getConfigId()
-        );
+        ));
     }
 
     private function lookerApiLogin(): void
