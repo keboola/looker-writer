@@ -52,6 +52,23 @@ class Config extends BaseConfig
         return $configId;
     }
 
+    public function getConnectionName(): ?string
+    {
+        $connectionName = $this->getValue(
+            [
+                'parameters',
+                'connectionName',
+            ],
+            false
+        );
+
+        if (!$connectionName) {
+            return null;
+        }
+
+        return $connectionName;
+    }
+
     public function getDbHost(): string
     {
         return $this->getValue(
