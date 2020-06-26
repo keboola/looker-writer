@@ -57,6 +57,7 @@ class Config extends BaseConfig
         $connectionName = $this->getValue(
             [
                 'parameters',
+                'looker',
                 'connectionName',
             ],
             false

@@ -21,7 +21,6 @@ class RunConfigDefinition extends BaseConfigDefinition
                 ->append((new DbNodeDefinition('db'))->isRequired())
                 ->append(new DbNodeDefinition('db_cache'))
                 ->append((new LookerNodeDefinition())->isRequired())
-                ->scalarNode('connectionName')->end()
                 ->arrayNode('tables')
                     ->requiresAtLeastOneElement()
                     ->isRequired()
