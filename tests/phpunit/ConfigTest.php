@@ -93,9 +93,7 @@ class ConfigTest extends TestCase
         $config = new Config(
             [
                 'parameters' => [
-                    'looker' => [
-                        'connectionName' => 'test-connection-name',
-                    ],
+                    'connectionName' => 'test-connection-name',
                 ],
             ],
             $this->getDummyConfigDefintion()
