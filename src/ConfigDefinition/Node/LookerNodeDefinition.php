@@ -27,6 +27,7 @@ class LookerNodeDefinition extends ArrayNodeDefinition
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+                ->scalarNode('connectionName')->end()
             ->end()
         ->end();
         // @formatter:on
