@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e51efe0af2bad4fab5f23fdf50fe65ff",
+    "content-hash": "e9c9eb90cbab778f31dd766a8ef78c14",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1918,6 +1918,7 @@
             ],
             "description": "This tool check syntax of PHP files about 20x faster than serial check.",
             "homepage": "https://github.com/JakubOnderka/PHP-Parallel-Lint",
+            "abandoned": "php-parallel-lint/php-parallel-lint",
             "time": "2018-02-24T15:31:20+00:00"
         },
         {
@@ -2402,26 +2403,24 @@
             "time": "2020-07-08T12:44:21+00:00"
         },
         {
-            "name": "phpstan/phpstan-shim",
-            "version": "0.10.8",
+            "name": "phpstan/phpstan",
+            "version": "0.12.46",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phpstan/phpstan-shim.git",
-                "reference": "7f433a1af3a3e27bea056552e42411c9d9af9c8e"
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "9419738e20f0c49757be05d22969c1c44c1dff3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan-shim/zipball/7f433a1af3a3e27bea056552e42411c9d9af9c8e",
-                "reference": "7f433a1af3a3e27bea056552e42411c9d9af9c8e",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9419738e20f0c49757be05d22969c1c44c1dff3b",
+                "reference": "9419738e20f0c49757be05d22969c1c44c1dff3b",
                 "shasum": ""
             },
             "require": {
-                "php": "~7.1"
+                "php": "^7.1|^8.0"
             },
-            "replace": {
-                "nikic/php-parser": "^4.0.2",
-                "phpstan/phpdoc-parser": "^0.3",
-                "phpstan/phpstan": "self.version"
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
             },
             "bin": [
                 "phpstan",
@@ -2430,7 +2429,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.10-dev"
+                    "dev-master": "0.12-dev"
                 }
             },
             "autoload": {
@@ -2442,8 +2441,22 @@
             "license": [
                 "MIT"
             ],
-            "description": "PHPStan Phar distribution",
-            "time": "2019-01-08T10:03:03+00:00"
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/phpstan",
+                    "type": "patreon"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-09-28T09:48:55+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2695,6 +2708,7 @@
             "keywords": [
                 "tokenizer"
             ],
+            "abandoned": true,
             "time": "2019-09-17T06:23:10+00:00"
         },
         {
