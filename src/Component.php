@@ -28,7 +28,7 @@ class Component extends BaseComponent
     public const ACTION_TEST_CONNECTION = 'testConnection';
     public const ACTION_TEST_LOOKER_CREDENTIALS = 'testLookerCredentials';
 
-    private ?AccessToken $lookerAccessToken;
+    private ?AccessToken $lookerAccessToken = null;
 
     private DbBackend $dbBackend;
 
