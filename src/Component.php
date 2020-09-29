@@ -9,28 +9,34 @@ use GuzzleHttp\HandlerStack;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
 use Keboola\LookerWriter\ConfigDefinition\RunConfigDefinition;
+use Keboola\LookerWriter\DbBackend\DbBackend;
+use Keboola\LookerWriter\DbBackend\SnowflakeBackend;
 use Keboola\LookerWriter\Exception\LookerWriterException;
-use Keboola\SnowflakeDbAdapter\Connection;
-use Keboola\SnowflakeDbAdapter\QueryBuilder;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 use Swagger\Client\Api\ApiAuthApi;
 use Swagger\Client\Api\ConnectionApi;
 use Swagger\Client\ApiException;
 use Swagger\Client\Configuration;
 use Swagger\Client\Model\AccessToken;
 use Swagger\Client\Model\DBConnection;
-use Swagger\Client\Model\DBConnectionOverride;
 
 class Component extends BaseComponent
 {
-    private const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
     public const ACTION_RUN = 'run';
     public const ACTION_TEST_CONNECTION = 'testConnection';
     public const ACTION_TEST_LOOKER_CREDENTIALS = 'testLookerCredentials';
 
-    /** @var AccessToken|null */
-    private $lookerAccessToken;
+    private ?AccessToken $lookerAccessToken;
+
+    private DbBackend $dbBackend;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        parent::__construct($logger);
+        $this->dbBackend = new SnowflakeBackend($this->getAppConfig());
+    }
 
     protected function getSyncActions(): array
     {
@@ -43,7 +49,7 @@ class Component extends BaseComponent
     protected function handleTestConnection(): array
     {
         try {
-            $this->testConnection();
+            $this->dbBackend->testConnection();
         } catch (\Throwable $e) {
             throw new UserException(sprintf("Connection failed: '%s'", $e->getMessage()), 0, $e);
         }
@@ -93,7 +99,9 @@ class Component extends BaseComponent
                 'Creating DB connection in Looker "%s"',
                 $this->getLookerConnectionName()
             ));
-            return $dbCredentialsClient->createConnection($this->createDbConnectionApiObject());
+            return $dbCredentialsClient->createConnection(
+                $this->dbBackend->createDbConnectionApiObject($this->getLookerConnectionName())
+            );
         }
 
         $this->getLogger()->info(sprintf(
@@ -108,8 +116,8 @@ class Component extends BaseComponent
         $this->getLogger()->info('Starting the writer job');
         $client = $this->getSyrupClient();
         $job = $client->runJob(
-            self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE,
-            $this->getSnowflakeWriterConfigData()
+            $this->dbBackend->getWriterComponentName(),
+            $this->dbBackend->getWriterConfig()
         );
         if ($job['status'] === 'error') {
             throw new LookerWriterException(sprintf(
@@ -128,42 +136,6 @@ class Component extends BaseComponent
             'Data has been written to schema assigned to Looker DB Connection "%s"',
             $this->getLookerConnectionName()
         ));
-    }
-
-    private function createDbConnectionApiObject(): DBConnection
-    {
-        $dbConnection = new DBConnection();
-        $config = $this->getAppConfig();
-        $dbConnection->setDialectName('snowflake');
-        $dbConnection->setName($this->getLookerConnectionName());
-        $dbConnection->setHost($config->getDbHost());
-        $dbConnection->setUsername($config->getDbUsername());
-        $dbConnection->setPassword($config->getDbPassword());
-        $dbConnection->setJdbcAdditionalParams(
-            sprintf(
-                'account=%s&warehouse=%s',
-                $config->getDbAccount(),
-                $config->getDbWarehouse()
-            )
-        );
-        $dbConnection->setDatabase($config->getDbDatabase());
-        $dbConnection->setSchema($config->getDbSchema());
-        if ($config->hasCacheConnection()) {
-            $dbConnection->setTmpDbName($config->getCacheSchema());
-            $pdtContextOverride = new DBConnectionOverride();
-            $pdtContextOverride->setContext('pdt');
-            $pdtContextOverride->setHost($config->getCacheDbHost());
-            $pdtContextOverride->setUsername($config->getCacheDbUsername());
-            $pdtContextOverride->setPassword($config->getCacheDbPassword());
-            $pdtContextOverride->setJdbcAdditionalParams(sprintf(
-                'account=%s&warehouse=%s',
-                $config->getCacheDbAccount(),
-                $config->getCacheDbWarehouse()
-            ));
-            $pdtContextOverride->setDatabase($config->getCacheDbDatabase());
-            $dbConnection->setPdtContextOverride($pdtContextOverride);
-        }
-        return $dbConnection;
     }
 
     protected function getAuthenticatedClient(string $accessToken): Client
@@ -238,35 +210,6 @@ class Component extends BaseComponent
         }
     }
 
-    private function getSnowflakeWriterConfigData(): array
-    {
-        $configData = [
-            'configData' => [
-                'storage' => [
-                    'input' => $this->getAppConfig()->getWriterInputMapping(),
-                ],
-                'parameters' => [
-                    'db' => [
-                        'host' => $this->getAppConfig()->getDbHost(),
-                        'database' => $this->getAppConfig()->getDbDatabase(),
-                        'user' => $this->getAppConfig()->getDbUsername(),
-                        'password' => $this->getAppConfig()->getDbPassword(),
-                        'schema' => $this->getAppConfig()->getDbSchemaName(),
-                        'warehouse' => $this->getAppConfig()->getDbWarehouse(),
-                    ],
-                    'tables' => $this->getAppConfig()->getTables(),
-                ],
-            ],
-        ];
-
-        $runId = $this->getAppConfig()->getRunId();
-        if ($runId) {
-            $configData['configData']['parameters']['db']['runId'] = $runId;
-        }
-
-        return $configData;
-    }
-
     private function getSyrupClient(): \Keboola\Syrup\Client
     {
         return new \Keboola\Syrup\Client([
@@ -292,18 +235,6 @@ class Component extends BaseComponent
             throw new LookerWriterException(sprintf('%s service not found', $serviceId));
         }
         return $foundServices[0]['url'];
-    }
-
-    private function testConnection(): void
-    {
-        $db = new Connection([
-            'database' => $this->getAppConfig()->getDbDatabase(),
-            'host' => $this->getAppConfig()->getDbHost(),
-            'password' => $this->getAppConfig()->getDbPassword(),
-            'user' => $this->getAppConfig()->getDbUsername(),
-            'warehouse' => $this->getAppConfig()->getDbWarehouse(),
-        ]);
-        $db->query('USE SCHEMA ' . QueryBuilder::quoteIdentifier($this->getAppConfig()->getDbSchema()));
     }
 
     private function getLookerAccessToken(): string

@@ -1,6 +1,6 @@
 {
     "require": {
-        "php": "^7.1",
+        "php": "^7.4",
         "keboola/db-adapter-snowflake": "^1.0.1",
         "keboola/looker-api": "^6.2.10",
         "keboola/php-component": "^7.0.3",
