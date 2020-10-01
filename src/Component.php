@@ -53,7 +53,7 @@ class Component extends BaseComponent
     protected function handleTestConnection(): array
     {
         try {
-            $client = $this->getSyrupClient();
+            $client = $this->getSyrupClient(1);
             $result = $client->runSyncAction(
                 $this->getDockerRunnerUrl(),
                 $this->dbBackend->getWriterComponentName(),
@@ -223,14 +223,20 @@ class Component extends BaseComponent
         }
     }
 
-    private function getSyrupClient(): \Keboola\Syrup\Client
+    private function getSyrupClient(?int $backoffMaxTries = null): \Keboola\Syrup\Client
     {
-        return new \Keboola\Syrup\Client([
+        $config = [
             'token' => $this->getAppConfig()->getStorageApiToken(),
             'url' => $this->getSyrupUrl(),
             'super' => 'docker',
             'runId' => $this->getAppConfig()->getRunId(),
-        ]);
+        ];
+
+        if ($backoffMaxTries) {
+            $config['backoffMaxTries'] = $backoffMaxTries;
+        }
+
+        return new \Keboola\Syrup\Client($config);
     }
 
     private function getDockerRunnerUrl(): string

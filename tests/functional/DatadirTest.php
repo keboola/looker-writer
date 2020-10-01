@@ -24,6 +24,7 @@ class DatadirTest extends DatadirTestCase
         $this->client = new Client([
             'token' => (string) getenv('KBC_TOKEN'),
             'url' => (string) getenv('KBC_URL'),
+            'backoffMaxTries' => 1,
         ]);
 
         // Generate KBC_RUNID
@@ -72,7 +73,7 @@ class DatadirTest extends DatadirTestCase
             'KBC_URL' => (string) getenv('KBC_URL'),
             'KBC_RUNID' => (string) getenv('KBC_RUNID'),
         ]);
-        $runProcess->setTimeout(0.0);
+        $runProcess->setTimeout(60.0);
         $runProcess->run();
         return $runProcess;
     }
