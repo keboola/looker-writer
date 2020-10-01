@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1335fc789f07ab9c0dddc29830b4af46",
+    "content-hash": "84a38f183b772300a9c1dd14b50e7600",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -347,45 +347,6 @@
             "description": "Keboola CSV reader and writer",
             "homepage": "http://keboola.com",
             "time": "2016-04-21T20:46:22+00:00"
-        },
-        {
-            "name": "keboola/db-adapter-snowflake",
-            "version": "1.02",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/keboola/db-adapter-snowflake.git",
-                "reference": "553f3c5bc3496c5fa12016057219616ff2ffa24b"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/keboola/db-adapter-snowflake/zipball/553f3c5bc3496c5fa12016057219616ff2ffa24b",
-                "reference": "553f3c5bc3496c5fa12016057219616ff2ffa24b",
-                "shasum": ""
-            },
-            "require": {
-                "ext-odbc": "*",
-                "php": "^7.1"
-            },
-            "require-dev": {
-                "jakub-onderka/php-parallel-lint": "^1.0",
-                "keboola/coding-standard": ">=7.0.2",
-                "keboola/datadir-tests": "^2.0",
-                "keboola/php-temp": "^1.0",
-                "phpstan/phpstan-shim": "^0.10.6",
-                "phpunit/phpunit": "^7.0",
-                "symfony/process": "^4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Keboola\\SnowflakeDbAdapter\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "time": "2019-12-09T14:51:48+00:00"
         },
         {
             "name": "keboola/looker-api",

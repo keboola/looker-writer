@@ -31,7 +31,7 @@ class DatadirTest extends DatadirTestCase
         $snowflakeConfig = $this->client->apiGet(sprintf(
             'storage/components/%s/configs/%s',
             self::COMPONENT_ID,
-            (string) getenv('SNOWFLAKE_BACKEND_CONFIG')
+            (string) getenv('SNOWFLAKE_BACKEND_CONFIG_ID')
         ));
         $snowflakeParameters = $snowflakeConfig['configuration']['parameters'];
         // Replace encrypted password with decrypted

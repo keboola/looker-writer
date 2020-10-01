@@ -2,7 +2,6 @@
     "require": {
         "php": "^7.4",
         "ext-json": "*",
-        "keboola/db-adapter-snowflake": "^1.0.1",
         "keboola/looker-api": "^6.2.10",
         "keboola/php-component": "^8.1.2",
         "keboola/storage-api-client": "^10.2-",
