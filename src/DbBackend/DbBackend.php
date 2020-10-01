@@ -10,9 +10,9 @@ interface DbBackend
 {
     public function createDbConnectionApiObject(string $connectionName): DBConnection;
 
-    public function testConnection(): void;
-
     public function getWriterComponentName(): string;
+
+    public function getTestConnectionConfig(): array;
 
     public function getWriterConfig(): array;
 }
