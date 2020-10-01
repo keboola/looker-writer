@@ -1,0 +1,15 @@
+{
+  "action": "testConnection",
+  "parameters": {
+    "db": {
+      "driver": "snowflake",
+      "host": "%env(string:SNOWFLAKE_HOST)%",
+      "port": "%env(string:SNOWFLAKE_PORT)%",
+      "database": "%env(string:SNOWFLAKE_DATABASE)%",
+      "schema": "%env(string:SNOWFLAKE_SCHEMA)%",
+      "warehouse": "%env(string:SNOWFLAKE_WAREHOUSE)%",
+      "user": "%env(string:SNOWFLAKE_USER)%",
+      "#password": "%env(string:SNOWFLAKE_PASSWORD)%"
+    }
+  }
+}

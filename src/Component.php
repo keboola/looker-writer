@@ -6,12 +6,14 @@ namespace Keboola\LookerWriter;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
 use Keboola\LookerWriter\ConfigDefinition\RunConfigDefinition;
 use Keboola\LookerWriter\DbBackend\DbBackend;
 use Keboola\LookerWriter\DbBackend\SnowflakeBackend;
 use Keboola\LookerWriter\Exception\LookerWriterException;
+use Keboola\Syrup\ClientException;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -32,6 +34,8 @@ class Component extends BaseComponent
 
     private DbBackend $dbBackend;
 
+    private ?array $services = null;
+
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
@@ -49,14 +53,23 @@ class Component extends BaseComponent
     protected function handleTestConnection(): array
     {
         try {
-            $this->dbBackend->testConnection();
+            $client = $this->getSyrupClient();
+            $result = $client->runSyncAction(
+                $this->getDockerRunnerUrl(),
+                $this->dbBackend->getWriterComponentName(),
+                'testConnection',
+                $this->dbBackend->getTestConnectionConfig(),
+            );
         } catch (\Throwable $e) {
-            throw new UserException(sprintf("Connection failed: '%s'", $e->getMessage()), 0, $e);
+            $prev = $e->getPrevious();
+            $payload = $prev && $prev instanceof GuzzleClientException ?
+                @json_decode($prev->getResponse()->getBody()->getContents(), true) :
+                null;
+            $message = $payload['message'] ?? $e->getMessage();
+            throw new UserException(sprintf("Connection failed: '%s'", $message), 0, $e);
         }
 
-        return [
-            'status' => 'success',
-        ];
+        return $result;
     }
 
     protected function handleTestLookerCredentials(): array
@@ -117,7 +130,7 @@ class Component extends BaseComponent
         $client = $this->getSyrupClient();
         $job = $client->runJob(
             $this->dbBackend->getWriterComponentName(),
-            $this->dbBackend->getWriterConfig()
+            ['configData' => $this->dbBackend->getWriterConfig()]
         );
         if ($job['status'] === 'error') {
             throw new LookerWriterException(sprintf(
@@ -220,21 +233,37 @@ class Component extends BaseComponent
         ]);
     }
 
+    private function getDockerRunnerUrl(): string
+    {
+        return $this->getServiceUrl('docker-runner');
+    }
+
     private function getSyrupUrl(): string
     {
-        $storageClient = new \Keboola\StorageApi\Client([
-            'token' => $this->getAppConfig()->getStorageApiToken(),
-            'url' => $this->getAppConfig()->getStorageApiUrl(),
-        ]);
-        $services = $storageClient->indexAction()['services'];
-        $serviceId = 'syrup';
-        $foundServices = array_values(array_filter($services, function ($service) use ($serviceId) {
+        return $this->getServiceUrl('syrup');
+    }
+
+    private function getServiceUrl(string $serviceId): string
+    {
+        $foundServices = array_values(array_filter($this->getServices(), function ($service) use ($serviceId) {
             return $service['id'] === $serviceId;
         }));
         if (empty($foundServices)) {
             throw new LookerWriterException(sprintf('%s service not found', $serviceId));
         }
         return $foundServices[0]['url'];
+    }
+
+    private function getServices(): array
+    {
+        if (!$this->services) {
+            $storageClient = new \Keboola\StorageApi\Client([
+                'token' => $this->getAppConfig()->getStorageApiToken(),
+                'url' => $this->getAppConfig()->getStorageApiUrl(),
+            ]);
+            $this->services = $storageClient->indexAction()['services'];
+        }
+        return $this->services;
     }
 
     private function getLookerAccessToken(): string
