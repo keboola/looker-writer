@@ -47,21 +47,21 @@ class TestLookerCredentialsDefinitionTest extends TestCase
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']['host']);
-        yield 'missing host' => [
+        yield 'missing host 1' => [
             'The child node "host" at path "root.parameters.looker" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']['credentialsId']);
-        yield 'missing host' => [
+        yield 'missing host 2' => [
             'The child node "credentialsId" at path "root.parameters.looker" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']['#token']);
-        yield 'missing host' => [
+        yield 'missing host 3' => [
             'The child node "#token" at path "root.parameters.looker" must be configured.',
             $updated,
         ];

@@ -91,15 +91,18 @@ docker-compose build
 docker-compose run --rm dev composer install --no-scripts
 ```
 
-Run the test suite using this command:
+Create a project with Looker Writer config and Keboola Snowflake backend.
+
 
 Following enviroment variables must be set:
 ```dotenv
-# id of config in KBC (used id DB name)
-KBC_CONFIGID=
+KBC_URL=https://connection.keboola.com/
+KBC_TOKEN=
+SNOWFLAKE_BACKEND_CONFIG_ID=
+SNOWFLAKE_BACKEND_DB_PASSWORD=
 ```
 
-
+Run the test suite using this command:
 ```shell script
 docker-compose run --rm dev composer tests
 ```
