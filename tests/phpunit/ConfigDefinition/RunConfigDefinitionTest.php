@@ -23,7 +23,7 @@ class RunConfigDefinitionTest extends TestCase
 
     public function provideValidConfigs(): Generator
     {
-        $fullConfig = $this->getFullConfig();
+        $fullConfig = $this->getFullConfigSnowflake();
         yield 'full config' => [$fullConfig];
 
         $updated = $fullConfig;
@@ -32,18 +32,28 @@ class RunConfigDefinitionTest extends TestCase
     }
 
     /**
-     * @dataProvider provideInvalidConfigs
+     * @dataProvider provideInvalidConfigsSnowflake
      */
-    public function testInvalidConfig(string $expectedExceptionMessage, array $rawConfig): void
+    public function testInvalidConfigSnowflake(string $expectedExceptionMessage, array $rawConfig): void
     {
         $this->expectException(InvalidConfigurationException::class);
         $this->expectExceptionMessage($expectedExceptionMessage);
-        $config = new Config($rawConfig, new RunConfigDefinition());
+        new Config($rawConfig, new RunConfigDefinition());
     }
 
-    public function provideInvalidConfigs(): Generator
+    /**
+     * @dataProvider provideInvalidConfigsBigQuery
+     */
+    public function testInvalidConfigBigQuery(string $expectedExceptionMessage, array $rawConfig): void
     {
-        $fullConfig = $this->getFullConfig();
+        $this->expectException(InvalidConfigurationException::class);
+        $this->expectExceptionMessage($expectedExceptionMessage);
+        new Config($rawConfig, new RunConfigDefinition());
+    }
+
+    public function provideInvalidConfigsSnowflake(): Generator
+    {
+        $fullConfig = $this->getFullConfigSnowflake();
 
         $updated = $fullConfig;
         unset($updated['parameters']['tables']);
@@ -96,7 +106,40 @@ class RunConfigDefinitionTest extends TestCase
         ];
     }
 
-    public function getFullConfig(): array
+    public function provideInvalidConfigsBigQuery(): Generator
+    {
+        $fullConfig = $this->getFullConfigBigQuery();
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['tables']);
+        yield 'tables are required' => [
+            'The child node "tables" at path "root.parameters" must be configured.',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['looker']);
+        yield 'looker is required' => [
+            'The child node "looker" at path "root.parameters" must be configured.',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['db']);
+        yield 'db is required' => [
+            'The child node "db" at path "root.parameters" must be configured.',
+            $updated,
+        ];
+
+        $updated = $fullConfig;
+        unset($updated['parameters']['db']['json_cert']['type']);
+        yield 'db.json_cert.type is required' => [
+            'The child node "type" at path "root.parameters.db.json_cert" must be configured.',
+            $updated,
+        ];
+    }
+
+    public function getFullConfigSnowflake(): array
     {
         return [
             'storage' => [
@@ -425,5 +468,26 @@ class RunConfigDefinitionTest extends TestCase
                 ],
             ],
         ];
+    }
+
+    public function getFullConfigBigQuery(): array
+    {
+        $config = $this->getFullConfigSnowflake();
+        $config['parameters']['db'] = [
+            'driver' => 'bigquery',
+            'json_cert' => [
+                'type' => 'service_account',
+                'project_id' => 'looker-writer-bigquery',
+                'private_key_id' => '12345',
+                '#private_key' => "-----BEGIN PRIVATE KEY-----\n....\n-----END PRIVATE KEY-----\n",
+                'client_email' => 'looker-writer-bigquery-test@looker-writer-bigquery.iam.gserviceaccount.com',
+                'client_id' =>  '103729776760399992476',
+                'auth_uri' => 'https://accounts.google.com/o/oauth2/auth',
+                'token_uri' =>  'https://oauth2.googleapis.com/token',
+                'auth_provider_x509_cert_url' => 'https://www.googleapis.com/oauth2/v1/certs',
+                'client_x509_cert_url' =>  'https://www.googleapis.com/robot/...',
+            ],
+        ];
+        return $config;
     }
 }

@@ -6,10 +6,43 @@ namespace Keboola\LookerWriter;
 
 use InvalidArgumentException;
 use Keboola\Component\Config\BaseConfig;
+use Keboola\LookerWriter\ConfigDefinition\Node\DbNodeDefinition;
 use Keboola\LookerWriter\Exception\LookerWriterException;
 
 class Config extends BaseConfig
 {
+    public function getDriver(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'driver',
+            ]
+        );
+    }
+
+    public function getBigQueryJsonCert(): array
+    {
+        if ($this->getDriver() !== DbNodeDefinition::DRIVER_BIGQUERY) {
+            throw new LookerWriterException('Json certificate can be used only for BigQuery driver.');
+        }
+
+        // Get array from configuration
+        $cert =  $this->getValue(
+            [
+                'parameters',
+                'db',
+                'json_cert',
+            ]
+        );
+
+        // Rename
+        $cert['private_key'] = $cert['#private_key'];
+        unset($cert['#private_key']);
+
+        return $cert;
+    }
 
     public function getLookerCredentialsId(): string
     {

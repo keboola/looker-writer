@@ -13,7 +13,6 @@ use Keboola\LookerWriter\ConfigDefinition\RunConfigDefinition;
 use Keboola\LookerWriter\DbBackend\DbBackend;
 use Keboola\LookerWriter\DbBackend\SnowflakeBackend;
 use Keboola\LookerWriter\Exception\LookerWriterException;
-use Keboola\Syrup\ClientException;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -192,7 +191,7 @@ class Component extends BaseComponent
             // intentionally throw away exception as it leaks credentials in message
             throw new LookerWriterException('Login to Looker API failed');
         }
-        $this->getLogger()->info('Successfully athenticated with Looker API');
+        $this->getLogger()->info('Successfully authenticated with Looker API');
     }
 
     public function getAppConfig(): Config

@@ -26,12 +26,14 @@ You need to have API access to Keboola Storage API to run the snowflake writer j
 
 ## Example config
 
+### Example Snowflake config
+
 ```json
 {
     "parameters": {
       "db": {
-        "database": "--fill in--",
         "driver": "snowflake",
+        "database": "--fill in--",
         "host": "keboola.snowflakecomputing.com",
         "password": "--fill in--",
         "port": "443",
@@ -76,6 +78,41 @@ You need to have API access to Keboola Storage API to run the snowflake writer j
         },
         {"...": "..."}
     ]
+  }
+}
+```
+
+### Example BigQuery config
+
+Key `parameters.db.json_cert` contains the contents of a BigQuery JSON certificate. 
+
+
+It can be created in https://console.developers.google.com -> `Credentials` -> `Service Accounts` -> `Keys`
+
+```json
+{
+    "parameters": {
+      "db": {
+        "driver": "bigquery",
+        "json_cert": {
+           "type": "service_account",
+           "project_id": "looker-writer-bigquery",
+           "private_key_id": "...",
+           "private_key": "-----BEGIN PRIVATE KEY-----\n....\n-----END PRIVATE KEY-----\n",
+           "client_email": "looker-writer-bigquery-test@looker-writer-bigquery.iam.gserviceaccount.com",
+           "client_id": "103729776760399992476",
+           "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+           "token_uri": "https://oauth2.googleapis.com/token",
+           "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+           "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/looker-writer-bigquery-test%40looker-writer-bigquery.iam.gserviceaccount.com"
+         }
+      },
+      "looker": {
+        "#token": "--fill in--",
+        "credentialsId": "--fill in--",
+        "host": "https://[yourcompany].api.looker.com/api/3.1"
+      },
+      "tables": ["..."]
   }
 }
 ```
