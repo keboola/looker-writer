@@ -1,6 +1,8 @@
 parameters:
     checkMissingIterableValueType: false
     ignoreErrors:
-        - '#Calling method end\(\) on possibly null value of type Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface|null.#'
-        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::ignoreExtraKeys\(\)#'
-        - '#Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)#'
+        - '#method .* on .*Symfony\\Component\\Config\\Definition\\Builder\\NodeParentInterface.#'
+        - '#method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition.#'
+        - '#\$object of function get_class expects object, Throwable\|null given.#'
+        - '#Cannot call method getBody\(\) on Psr\\Http\\Message\\ResponseInterface\|null.#'
+        - '#Cannot call method getAccessToken\(\) on Swagger\\Client\\Model\\AccessToken\|null.#'
