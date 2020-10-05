@@ -13,7 +13,7 @@ class DbNodeDefinition extends ArrayNodeDefinition
     public const DRIVER_SNOWFLAKE = 'snowflake';
     public const DRIVER_BIGQUERY = 'bigquery';
     public const SNOWFLAKE_REQUIRED_NODES = ['host', 'warehouse', 'database', 'schema', 'user'];
-    public const BIGQUERY_REQUIRED_NODES = ['json_cert'];
+    public const BIGQUERY_REQUIRED_NODES = ['service_account'];
 
     public function __construct(string $nodeName)
     {
@@ -99,7 +99,7 @@ class DbNodeDefinition extends ArrayNodeDefinition
         // Required keys are defined in: self::BIGQUERY_REQUIRED_NODES
         // @formatter:off
         $builder
-            ->arrayNode('json_cert')
+            ->arrayNode('service_account')
             ->children()
                 // All these values are part of BigQuery JSON certificate file
                 // and are used to create the Looker connection

@@ -84,7 +84,7 @@ You need to have API access to Keboola Storage API to run the snowflake writer j
 
 ### Example BigQuery config
 
-Key `parameters.db.json_cert` contains the contents of a BigQuery JSON certificate. 
+Key `parameters.db.service_account` contains the contents of a BigQuery JSON certificate. 
 
 
 It can be created in https://console.developers.google.com -> `Credentials` -> `Service Accounts` -> `Keys`
@@ -94,7 +94,7 @@ It can be created in https://console.developers.google.com -> `Credentials` -> `
     "parameters": {
       "db": {
         "driver": "bigquery",
-        "json_cert": {
+        "service_account": {
            "type": "service_account",
            "project_id": "looker-writer-bigquery",
            "private_key_id": "...",
