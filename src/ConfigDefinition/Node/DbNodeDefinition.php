@@ -13,7 +13,7 @@ class DbNodeDefinition extends ArrayNodeDefinition
     public const DRIVER_SNOWFLAKE = 'snowflake';
     public const DRIVER_BIGQUERY = 'bigquery';
     public const SNOWFLAKE_REQUIRED_NODES = ['host', 'warehouse', 'database', 'schema', 'user'];
-    public const BIGQUERY_REQUIRED_NODES = ['service_account'];
+    public const BIGQUERY_REQUIRED_NODES = ['dataset', 'service_account'];
 
     public function __construct(string $nodeName)
     {
@@ -99,6 +99,9 @@ class DbNodeDefinition extends ArrayNodeDefinition
         // Required keys are defined in: self::BIGQUERY_REQUIRED_NODES
         // @formatter:off
         $builder
+            ->scalarNode('dataset')
+                ->cannotBeEmpty()
+            ->end()
             ->arrayNode('service_account')
             ->children()
                 // All these values are part of BigQuery JSON certificate file

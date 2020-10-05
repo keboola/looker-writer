@@ -12,7 +12,7 @@ interface DbBackend
 
     public function getWriterComponentName(): string;
 
-    public function getTestConnectionConfig(): array;
+    public function getTestConnectionConfig(): ?array;
 
     public function getWriterConfig(): array;
 }

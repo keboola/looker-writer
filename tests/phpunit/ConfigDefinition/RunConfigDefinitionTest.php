@@ -475,6 +475,7 @@ class RunConfigDefinitionTest extends TestCase
         $config = $this->getFullConfigSnowflake();
         $config['parameters']['db'] = [
             'driver' => 'bigquery',
+            'dataset' => 'test_dataset',
             'service_account' => [
                 'type' => 'service_account',
                 'project_id' => 'looker-writer-bigquery',

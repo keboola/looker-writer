@@ -22,6 +22,29 @@ class Config extends BaseConfig
         );
     }
 
+    public function getBigQueryDataset(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'dataset',
+            ]
+        );
+    }
+
+    public function getBigQueryProjectId(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'service_account',
+                'project_id',
+            ]
+        );
+    }
+
     public function getBigQueryServiceAccount(bool $renamePrivateKey): array
     {
         if ($this->getDriver() !== DbNodeDefinition::DRIVER_BIGQUERY) {
@@ -36,7 +59,6 @@ class Config extends BaseConfig
                 'service_account',
             ]
         );
-
 
         if ($renamePrivateKey) {
             // Rename #private_key -> private_key

@@ -48,6 +48,30 @@ class DatadirTest extends DatadirTestCase
         putenv('SNOWFLAKE_WAREHOUSE=' . $snowflakeDb['warehouse']);
         putenv('SNOWFLAKE_USER=' . $snowflakeDb['user']);
         putenv('SNOWFLAKE_PASSWORD=' . $snowflakeDb['#password']);
+
+        // Load BigQuery configuration
+        /** @var array $snowflakeConfig */
+        $snowflakeConfig = $this->client->apiGet(sprintf(
+            'storage/components/%s/configs/%s',
+            self::COMPONENT_ID,
+            (string) getenv('BIGQUERY_BACKEND_CONFIG_ID')
+        ));
+        $bigQueryParameters = $snowflakeConfig['configuration']['parameters'];
+        // Replace encrypted private key with decrypted
+        $bigQueryParameters['db']['service_account']['#private_key'] =
+            (string) getenv('BIGQUERY_BACKEND_PRIVATE_KEY');
+        $bigQueryDb = $bigQueryParameters['db'];
+        putenv('BIGQUERY_DATASET=' . $bigQueryDb['dataset']);
+        putenv('BIGQUERY_SA_TYPE=' . $bigQueryDb['service_account']['type']);
+        putenv('BIGQUERY_SA_PROJECT_ID=' . $bigQueryDb['service_account']['project_id']);
+        putenv('BIGQUERY_SA_PRIVATE_KEY_ID=' . $bigQueryDb['service_account']['private_key_id']);
+        putenv('BIGQUERY_SA_PRIVATE_KEY=' . $bigQueryDb['service_account']['#private_key']);
+        putenv('BIGQUERY_SA_CLIENT_EMAIL=' . $bigQueryDb['service_account']['client_email']);
+        putenv('BIGQUERY_SA_CLIENT_ID=' . $bigQueryDb['service_account']['client_id']);
+        putenv('BIGQUERY_SA_AUTH_URI=' . $bigQueryDb['service_account']['auth_uri']);
+        putenv('BIGQUERY_SA_TOKEN_URI=' . $bigQueryDb['service_account']['token_uri']);
+        putenv('BIGQUERY_SA_AUTH_X509_CERT_URL=' . $bigQueryDb['service_account']['auth_provider_x509_cert_url']);
+        putenv('BIGQUERY_SA_CLIENT_X509_CERT_URL=' . $bigQueryDb['service_account']['client_x509_cert_url']);
     }
 
     protected function runScript(string $datadirPath): Process
