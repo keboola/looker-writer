@@ -35,6 +35,8 @@ class Component extends BaseComponent
 
     private DbBackend $dbBackend;
 
+    private ?ConnectionApi $dbCredentialsClient = null;
+
     private ?array $services = null;
 
     public function __construct(LoggerInterface $logger)
@@ -104,32 +106,17 @@ class Component extends BaseComponent
 
     public function ensureConnectionExists(): DBConnection
     {
-        $dbCredentialsClient = new ConnectionApi(
-            $this->getAuthenticatedClient($this->getLookerAccessToken()),
-            $this->getLookerConfiguration($this->getAppConfig()->getLookerHost())
-        );
-
+        $name = $this->getLookerConnectionName();
         try {
-            $connection = $dbCredentialsClient->connection($this->getLookerConnectionName());
-            $this->getLogger()->info(sprintf(
-                'Connection "%s" already exists in Looker',
-                $this->getLookerConnectionName()
-            ));
-            return $connection;
+            return $this->getConnection($name);
         } catch (ApiException $e) {
-            // Ignore if 404 -> not found
-            if ($e->getCode() !== 404) {
-                throw $e;
+            // Create connection if not found
+            if ($e->getCode() === 404) {
+                return $this->createConnection($name);
             }
-        }
 
-        $this->getLogger()->info(sprintf(
-            'Creating DB connection in Looker "%s"',
-            $this->getLookerConnectionName()
-        ));
-        return $dbCredentialsClient->createConnection(
-            $this->dbBackend->createDbConnectionApiObject($this->getLookerConnectionName())
-        );
+            throw $e;
+        }
     }
 
     private function runWriterJob(): void
@@ -307,5 +294,33 @@ class Component extends BaseComponent
         }
 
         throw new LookerWriterException(sprintf('Unexpected driver "%s".', $driver));
+    }
+
+    private function getDbCredentialsClient(): ConnectionApi
+    {
+        if (!$this->dbCredentialsClient) {
+            $this->dbCredentialsClient = new ConnectionApi(
+                $this->getAuthenticatedClient($this->getLookerAccessToken()),
+                $this->getLookerConfiguration($this->getAppConfig()->getLookerHost())
+            );
+        }
+
+        return $this->dbCredentialsClient;
+    }
+
+    private function getConnection(string $name): DBConnection
+    {
+        $connection = $this->getDbCredentialsClient()->connection($name);
+        $this->getLogger()->info(sprintf('Connection "%s" already exists in Looker', $name));
+        return $connection;
+    }
+
+    private function createConnection(string $name): DBConnection
+    {
+        $this->getLogger()->info(sprintf('Creating DB connection in Looker "%s"', $name));
+        $apiObject = $this->dbBackend->createDbConnectionApiObject($name);
+        return $this
+            ->getDbCredentialsClient()
+            ->createConnection($apiObject);
     }
 }
