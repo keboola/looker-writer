@@ -9,7 +9,9 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
+use Keboola\LookerWriter\ConfigDefinition\Node\DbNodeDefinition;
 use Keboola\LookerWriter\ConfigDefinition\RunConfigDefinition;
+use Keboola\LookerWriter\DbBackend\BigQueryBackend;
 use Keboola\LookerWriter\DbBackend\DbBackend;
 use Keboola\LookerWriter\DbBackend\SnowflakeBackend;
 use Keboola\LookerWriter\Exception\LookerWriterException;
@@ -33,12 +35,14 @@ class Component extends BaseComponent
 
     private DbBackend $dbBackend;
 
+    private ?ConnectionApi $dbCredentialsClient = null;
+
     private ?array $services = null;
 
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        $this->dbBackend = new SnowflakeBackend($this->getAppConfig());
+        $this->dbBackend = $this->createBackendWrapper();
     }
 
     protected function getSyncActions(): array
@@ -52,12 +56,18 @@ class Component extends BaseComponent
     protected function handleTestConnection(): array
     {
         try {
+            $testConnectionConfig = $this->dbBackend->getTestConnectionConfig();
+            if ($testConnectionConfig === null) {
+                // Test connection is not supported by BigQueryWriter
+                return ['success' => 'true', 'message' => 'Not supported.'];
+            }
+
             $client = $this->getSyrupClient(1);
             $result = $client->runSyncAction(
                 $this->getDockerRunnerUrl(),
                 $this->dbBackend->getWriterComponentName(),
                 'testConnection',
-                $this->dbBackend->getTestConnectionConfig(),
+                $testConnectionConfig,
             );
         } catch (\Throwable $e) {
             $prev = $e->getPrevious();
@@ -94,33 +104,19 @@ class Component extends BaseComponent
         $this->runWriterJob();
     }
 
-    public function ensureConnectionExists(): ?DBConnection
+    public function ensureConnectionExists(): DBConnection
     {
-        $dbCredentialsClient = new ConnectionApi(
-            $this->getAuthenticatedClient($this->getLookerAccessToken()),
-            $this->getLookerConfiguration($this->getAppConfig()->getLookerHost())
-        );
-        $foundConnections = array_filter(
-            $dbCredentialsClient->allConnections('name'),
-            function (DBConnection $connection) {
-                return $connection->getName() === $this->getLookerConnectionName();
+        $name = $this->getLookerConnectionName();
+        try {
+            return $this->getConnection($name);
+        } catch (ApiException $e) {
+            // Create connection if not found
+            if ($e->getCode() === 404) {
+                return $this->createConnection($name);
             }
-        );
-        if (count($foundConnections) === 0) {
-            $this->getLogger()->info(sprintf(
-                'Creating DB connection in Looker "%s"',
-                $this->getLookerConnectionName()
-            ));
-            return $dbCredentialsClient->createConnection(
-                $this->dbBackend->createDbConnectionApiObject($this->getLookerConnectionName())
-            );
-        }
 
-        $this->getLogger()->info(sprintf(
-            'Connection "%s" already exists in Looker',
-            $this->getLookerConnectionName()
-        ));
-        return  null;
+            throw $e;
+        }
     }
 
     private function runWriterJob(): void
@@ -284,5 +280,47 @@ class Component extends BaseComponent
         $configuration = new Configuration();
         $configuration->setHost($host);
         return $configuration;
+    }
+
+    private function createBackendWrapper(): DbBackend
+    {
+        $driver = $this->getAppConfig()->getDriver();
+        switch ($driver) {
+            case DbNodeDefinition::DRIVER_SNOWFLAKE:
+                return new SnowflakeBackend($this->getAppConfig());
+
+            case DbNodeDefinition::DRIVER_BIGQUERY:
+                return new BigQueryBackend($this->getAppConfig());
+        }
+
+        throw new LookerWriterException(sprintf('Unexpected driver "%s".', $driver));
+    }
+
+    private function getDbCredentialsClient(): ConnectionApi
+    {
+        if (!$this->dbCredentialsClient) {
+            $this->dbCredentialsClient = new ConnectionApi(
+                $this->getAuthenticatedClient($this->getLookerAccessToken()),
+                $this->getLookerConfiguration($this->getAppConfig()->getLookerHost())
+            );
+        }
+
+        return $this->dbCredentialsClient;
+    }
+
+    private function getConnection(string $name): DBConnection
+    {
+        $connection = $this->getDbCredentialsClient()->connection($name);
+        $this->getLogger()->info(sprintf('Connection "%s" already exists in Looker', $name));
+        return $connection;
+    }
+
+    private function createConnection(string $name): DBConnection
+    {
+        $this->getLogger()->info(sprintf('Creating DB connection in Looker "%s"', $name));
+        $apiObject = $this->dbBackend->createDbConnectionApiObject($name);
+        return $this
+            ->getDbCredentialsClient()
+            ->createConnection($apiObject);
     }
 }

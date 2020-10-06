@@ -132,9 +132,9 @@ class RunConfigDefinitionTest extends TestCase
         ];
 
         $updated = $fullConfig;
-        unset($updated['parameters']['db']['json_cert']['type']);
-        yield 'db.json_cert.type is required' => [
-            'The child node "type" at path "root.parameters.db.json_cert" must be configured.',
+        unset($updated['parameters']['db']['service_account']['type']);
+        yield 'db.service_account.type is required' => [
+            'The child node "type" at path "root.parameters.db.service_account" must be configured.',
             $updated,
         ];
     }
@@ -475,7 +475,8 @@ class RunConfigDefinitionTest extends TestCase
         $config = $this->getFullConfigSnowflake();
         $config['parameters']['db'] = [
             'driver' => 'bigquery',
-            'json_cert' => [
+            'dataset' => 'test_dataset',
+            'service_account' => [
                 'type' => 'service_account',
                 'project_id' => 'looker-writer-bigquery',
                 'private_key_id' => '12345',

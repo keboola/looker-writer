@@ -84,7 +84,7 @@ You need to have API access to Keboola Storage API to run the snowflake writer j
 
 ### Example BigQuery config
 
-Key `parameters.db.json_cert` contains the contents of a BigQuery JSON certificate. 
+Key `parameters.db.service_account` contains the contents of a BigQuery JSON certificate. 
 
 
 It can be created in https://console.developers.google.com -> `Credentials` -> `Service Accounts` -> `Keys`
@@ -94,7 +94,8 @@ It can be created in https://console.developers.google.com -> `Credentials` -> `
     "parameters": {
       "db": {
         "driver": "bigquery",
-        "json_cert": {
+        "dataset": "test_dataset",
+        "service_account": {
            "type": "service_account",
            "project_id": "looker-writer-bigquery",
            "private_key_id": "...",
@@ -128,8 +129,8 @@ docker-compose build
 docker-compose run --rm dev composer install --no-scripts
 ```
 
-Create a project with Looker Writer config and Keboola Snowflake backend.
-
+- Create a project with Looker Writer config and Keboola Snowflake backend.
+- Create a BigQuery service account: https://console.developers.google.com -> `Credentials` -> `Service Accounts` -> `Keys`
 
 Following enviroment variables must be set:
 ```dotenv
@@ -137,6 +138,8 @@ KBC_URL=https://connection.keboola.com/
 KBC_TOKEN=
 SNOWFLAKE_BACKEND_CONFIG_ID=
 SNOWFLAKE_BACKEND_DB_PASSWORD=
+BIGQUERY_BACKEND_CONFIG_ID=
+BIGQUERY_BACKEND_PRIVATE_KEY=
 ```
 
 Run the test suite using this command:

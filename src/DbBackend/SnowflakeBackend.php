@@ -59,7 +59,7 @@ class SnowflakeBackend implements DbBackend
         return self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE;
     }
 
-    public function getTestConnectionConfig(): array
+    public function getTestConnectionConfig(): ?array
     {
         return [
             'parameters' => [

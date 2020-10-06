@@ -22,10 +22,33 @@ class Config extends BaseConfig
         );
     }
 
-    public function getBigQueryJsonCert(): array
+    public function getBigQueryDataset(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'dataset',
+            ]
+        );
+    }
+
+    public function getBigQueryProjectId(): string
+    {
+        return $this->getValue(
+            [
+                'parameters',
+                'db',
+                'service_account',
+                'project_id',
+            ]
+        );
+    }
+
+    public function getBigQueryServiceAccount(bool $renamePrivateKey): array
     {
         if ($this->getDriver() !== DbNodeDefinition::DRIVER_BIGQUERY) {
-            throw new LookerWriterException('Json certificate can be used only for BigQuery driver.');
+            throw new LookerWriterException('Service account can be used only for BigQuery driver.');
         }
 
         // Get array from configuration
@@ -33,13 +56,17 @@ class Config extends BaseConfig
             [
                 'parameters',
                 'db',
-                'json_cert',
+                'service_account',
             ]
         );
 
-        // Rename
-        $cert['private_key'] = $cert['#private_key'];
-        unset($cert['#private_key']);
+        if ($renamePrivateKey) {
+            // Rename #private_key -> private_key
+            // For Looker is required "private_key"
+            // ... but for BigQuery Writer is required "#private_key"
+            $cert['private_key'] = $cert['#private_key'];
+            unset($cert['#private_key']);
+        }
 
         return $cert;
     }
