@@ -190,7 +190,7 @@ class Component extends BaseComponent
                 throw new UserException('Invalid Looker URL host');
             }
             // intentionally throw away exception as it leaks credentials in message
-            throw new LookerWriterException('Login to Looker API failed');
+            throw new UserException('Login to Looker API failed, code: ' . $e->getCode());
         }
         $this->getLogger()->info('Successfully authenticated with Looker API');
     }
