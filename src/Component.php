@@ -42,7 +42,12 @@ class Component extends BaseComponent
     public function __construct(LoggerInterface $logger)
     {
         parent::__construct($logger);
-        $this->dbBackend = $this->createBackendWrapper();
+
+        // "parameters.db.driver" is not provided in the config for testLookerCredentials,
+        // ... so we cannot create backend wrapper
+        if (in_array($this->getConfig()->getAction(), [self::ACTION_RUN, self::ACTION_TEST_CONNECTION])) {
+            $this->dbBackend = $this->createBackendWrapper();
+        }
     }
 
     protected function getSyncActions(): array
