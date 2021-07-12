@@ -28,27 +28,27 @@ class SnowflakeBackendTest extends TestCase
     {
         yield 'azure-ne' => [
             'connection.north-europe.azure.keboola.com',
-            'keboola.wr-snowflake-blob-storage'
+            'keboola.wr-snowflake-blob-storage',
         ];
 
         yield 'azure-csas-prod' => [
             'connection.csas.keboola.cloud',
-            'keboola.wr-snowflake-blob-storage'
+            'keboola.wr-snowflake-blob-storage',
         ];
 
         yield 'azure-csas-test' => [
             'connection.csas-test.keboola.com',
-            'keboola.wr-snowflake-blob-storage'
+            'keboola.wr-snowflake-blob-storage',
         ];
 
         yield 'aws-us' => [
             'connection.keboola.com',
-            'keboola.wr-db-snowflake'
+            'keboola.wr-db-snowflake',
         ];
 
         yield 'aws-eu' => [
             'connection.eu-central-1.keboola.com',
-            'keboola.wr-db-snowflake'
+            'keboola.wr-db-snowflake',
         ];
     }
 }
