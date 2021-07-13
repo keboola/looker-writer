@@ -10,7 +10,9 @@ use Swagger\Client\Model\DBConnectionOverride;
 
 class SnowflakeBackend implements DbBackend
 {
-    public const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE = 'keboola.wr-db-snowflake';
+    public const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE_S3 = 'keboola.wr-db-snowflake';
+
+    public const COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE_ABS = 'keboola.wr-snowflake-blob-storage';
 
     private Config $config;
 
@@ -56,7 +58,14 @@ class SnowflakeBackend implements DbBackend
 
     public function getWriterComponentName(): string
     {
-        return self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE;
+        switch ($this->config->getStorageApiUrl()) {
+            case 'connection.north-europe.azure.keboola.com':
+            case 'connection.csas.keboola.cloud':
+            case 'connection.csas-test.keboola.com':
+                return self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE_ABS;
+            default:
+                return self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE_S3;
+        }
     }
 
     public function getTestConnectionConfig(): ?array
