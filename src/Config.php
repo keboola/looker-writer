@@ -302,6 +302,16 @@ class Config extends BaseConfig
         return $url;
     }
 
+    public function getStageFileProvider(): string
+    {
+
+        $fileProvider = getenv('KBC_STAGING_FILE_PROVIDER');
+        if (!$fileProvider) {
+            throw new LookerWriterException('KBC_STAGING_FILE_PROVIDER environment variable must be set');
+        }
+        return $fileProvider;
+    }
+
     public function getDbSchemaName(): string
     {
         return $this->getValue(
