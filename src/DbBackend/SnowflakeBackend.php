@@ -58,10 +58,8 @@ class SnowflakeBackend implements DbBackend
 
     public function getWriterComponentName(): string
     {
-        switch ($this->config->getStorageApiUrl()) {
-            case 'connection.north-europe.azure.keboola.com':
-            case 'connection.csas.keboola.cloud':
-            case 'connection.csas-test.keboola.com':
+        switch ($this->config->getStageFileProvider()) {
+            case 'azure':
                 return self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE_ABS;
             default:
                 return self::COMPONENT_KEBOOLA_WR_DB_SNOWFLAKE_S3;

@@ -30,6 +30,9 @@ class DatadirTest extends DatadirTestCase
         // Generate KBC_RUNID
         putenv('KBC_RUNID=' . $this->client->generateRunId());
 
+        // Generate KBC_STAGING_FILE_PROVIDER
+        putenv('KBC_STAGING_FILE_PROVIDER=aws');
+
         // Load Snowflake configuration
         /** @var array $snowflakeConfig */
         $snowflakeConfig = $this->client->apiGet(sprintf(
@@ -96,6 +99,7 @@ class DatadirTest extends DatadirTestCase
             'KBC_TOKEN' => (string) getenv('KBC_TOKEN'),
             'KBC_URL' => (string) getenv('KBC_URL'),
             'KBC_RUNID' => (string) getenv('KBC_RUNID'),
+            'KBC_STAGING_FILE_PROVIDER' => (string) getenv('KBC_STAGING_FILE_PROVIDER'),
         ]);
         $runProcess->setTimeout(60.0);
         $runProcess->run();

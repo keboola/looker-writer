@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 class SnowflakeBackendTest extends TestCase
 {
     /** @dataProvider componentNameDataProvider */
-    public function testComponentName(string $storageUrl, string $expectedComponentId): void
+    public function testComponentName(string $stageingFileProvider, string $expectedComponentId): void
     {
-        putenv('KBC_URL=' . $storageUrl);
+        putenv('KBC_STAGING_FILE_PROVIDER=' . $stageingFileProvider);
         $config = new Config([], new RunConfigDefinition());
 
         $snflkBackend = new SnowflakeBackend($config);
@@ -26,28 +26,13 @@ class SnowflakeBackendTest extends TestCase
 
     public function componentNameDataProvider(): Generator
     {
-        yield 'azure-ne' => [
-            'connection.north-europe.azure.keboola.com',
+        yield 'azure' => [
+            'azure',
             'keboola.wr-snowflake-blob-storage',
         ];
 
-        yield 'azure-csas-prod' => [
-            'connection.csas.keboola.cloud',
-            'keboola.wr-snowflake-blob-storage',
-        ];
-
-        yield 'azure-csas-test' => [
-            'connection.csas-test.keboola.com',
-            'keboola.wr-snowflake-blob-storage',
-        ];
-
-        yield 'aws-us' => [
-            'connection.keboola.com',
-            'keboola.wr-db-snowflake',
-        ];
-
-        yield 'aws-eu' => [
-            'connection.eu-central-1.keboola.com',
+        yield 'aws' => [
+            'aws',
             'keboola.wr-db-snowflake',
         ];
     }
