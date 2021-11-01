@@ -48,28 +48,28 @@ class TestLookerCredentialsDefinitionTest extends TestCase
         $updated = $fullConfig;
         unset($updated['parameters']['looker']['host']);
         yield 'missing host 1' => [
-            'The child node "host" at path "root.parameters.looker" must be configured.',
+            'The child config "host" under "root.parameters.looker" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']['credentialsId']);
         yield 'missing host 2' => [
-            'The child node "credentialsId" at path "root.parameters.looker" must be configured.',
+            'The child config "credentialsId" under "root.parameters.looker" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']['#token']);
         yield 'missing host 3' => [
-            'The child node "#token" at path "root.parameters.looker" must be configured.',
+            'The child config "#token" under "root.parameters.looker" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']);
         yield 'missing looker' => [
-            'The child node "looker" at path "root.parameters" must be configured.',
+            'The child config "looker" under "root.parameters" must be configured.',
             $updated,
         ];
     }
@@ -81,7 +81,7 @@ class TestLookerCredentialsDefinitionTest extends TestCase
                 'looker' => [
                     'credentialsId' => 'nCn6YssWw3HTSwkR2Y3t',
                     '#token' => 'hxchnB2kcjnTRHt6csY9GXXq',
-                    'host' => 'https://keboolads.api.looker.com/api/3.1',
+                    'host' => 'https://keboolads.looker.com/api/3.1',
                 ],
             ],
         ];

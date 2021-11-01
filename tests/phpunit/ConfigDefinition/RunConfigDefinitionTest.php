@@ -58,21 +58,21 @@ class RunConfigDefinitionTest extends TestCase
         $updated = $fullConfig;
         unset($updated['parameters']['tables']);
         yield 'tables are required' => [
-            'The child node "tables" at path "root.parameters" must be configured.',
+            'The child config "tables" under "root.parameters" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']);
         yield 'looker is required' => [
-            'The child node "looker" at path "root.parameters" must be configured.',
+            'The child config "looker" under "root.parameters" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['db']);
         yield 'db is required' => [
-            'The child node "db" at path "root.parameters" must be configured.',
+            'The child config "db" under "root.parameters" must be configured.',
             $updated,
         ];
 
@@ -93,7 +93,7 @@ class RunConfigDefinitionTest extends TestCase
             ],
         ];
         yield 'tables items are validated' => [
-            'The child node "tableId" at path "root.parameters.tables.0" must be configured.',
+            'The child config "tableId" under "root.parameters.tables.0" must be configured.',
             $updated,
         ];
 
@@ -113,28 +113,28 @@ class RunConfigDefinitionTest extends TestCase
         $updated = $fullConfig;
         unset($updated['parameters']['tables']);
         yield 'tables are required' => [
-            'The child node "tables" at path "root.parameters" must be configured.',
+            'The child config "tables" under "root.parameters" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['looker']);
         yield 'looker is required' => [
-            'The child node "looker" at path "root.parameters" must be configured.',
+            'The child config "looker" under "root.parameters" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['db']);
         yield 'db is required' => [
-            'The child node "db" at path "root.parameters" must be configured.',
+            'The child config "db" under "root.parameters" must be configured.',
             $updated,
         ];
 
         $updated = $fullConfig;
         unset($updated['parameters']['db']['service_account']['type']);
         yield 'db.service_account.type is required' => [
-            'The child node "type" at path "root.parameters.db.service_account" must be configured.',
+            'The child config "type" under "root.parameters.db.service_account" must be configured.',
             $updated,
         ];
     }
@@ -218,7 +218,7 @@ class RunConfigDefinitionTest extends TestCase
                 'looker' => [
                     'credentialsId' => 'nCn6YssWw3HTSwkR2Y3t',
                     '#token' => 'hxchnB2kcjnTRHt6csY9GXXq',
-                    'host' => 'https://keboolads.api.looker.com/api/3.1',
+                    'host' => 'https://keboolads.looker.com/api/3.1',
                 ],
                 'tables' => [
                     [

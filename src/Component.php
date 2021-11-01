@@ -15,6 +15,8 @@ use Keboola\LookerWriter\DbBackend\BigQueryBackend;
 use Keboola\LookerWriter\DbBackend\DbBackend;
 use Keboola\LookerWriter\DbBackend\SnowflakeBackend;
 use Keboola\LookerWriter\Exception\LookerWriterException;
+use Keboola\LookerWriter\JobRunner\QueueV2JobRunner;
+use Keboola\LookerWriter\JobRunner\SyrupJobRunner;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -24,6 +26,7 @@ use Swagger\Client\ApiException;
 use Swagger\Client\Configuration;
 use Swagger\Client\Model\AccessToken;
 use Swagger\Client\Model\DBConnection;
+use Throwable;
 
 class Component extends BaseComponent
 {
@@ -36,8 +39,6 @@ class Component extends BaseComponent
     private DbBackend $dbBackend;
 
     private ?ConnectionApi $dbCredentialsClient = null;
-
-    private ?array $services = null;
 
     public function __construct(LoggerInterface $logger)
     {
@@ -66,15 +67,12 @@ class Component extends BaseComponent
                 // Test connection is not supported by BigQueryWriter
                 return ['success' => 'true', 'message' => 'Not supported.'];
             }
-
-            $client = $this->getSyrupClient(1);
-            $result = $client->runSyncAction(
-                $this->getDockerRunnerUrl(),
+            $jobRunner = new SyrupJobRunner($this->getAppConfig(), $this->getLogger());
+            $jobResult = $jobRunner->runTestConnection(
                 $this->dbBackend->getWriterComponentName(),
-                'testConnection',
-                $testConnectionConfig,
+                $testConnectionConfig
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $prev = $e->getPrevious();
             $payload = $prev && $prev instanceof GuzzleClientException ?
                 @json_decode($prev->getResponse()->getBody()->getContents(), true) :
@@ -83,7 +81,7 @@ class Component extends BaseComponent
             throw new UserException(sprintf("Connection failed: '%s'", $message), 0, $e);
         }
 
-        return $result;
+        return $jobResult;
     }
 
     protected function handleTestLookerCredentials(): array
@@ -127,24 +125,21 @@ class Component extends BaseComponent
     private function runWriterJob(): void
     {
         $this->getLogger()->info('Starting the writer job');
-        $client = $this->getSyrupClient();
-        $job = $client->runJob(
-            $this->dbBackend->getWriterComponentName(),
-            ['configData' => $this->dbBackend->getWriterConfig()]
-        );
-        if ($job['status'] === 'error') {
-            throw new LookerWriterException(sprintf(
-                'Writer job failed with following message: "%s"',
-                $job['result']['message']
-            ));
-        } elseif ($job['status'] !== 'success') {
-            throw new LookerWriterException(sprintf(
-                'Writer job failed with status "%s" and message: "%s"',
-                $job['status'],
-                $job['result']['message'] ?? 'No message'
-            ));
+
+        $verifyToken = $this->getStorageApiClient()->verifyToken();
+
+        if (in_array('queuev2', $verifyToken['owner']['features'])) {
+            $jobRunner = new QueueV2JobRunner($this->getAppConfig(), $this->getLogger());
+        } else {
+            $jobRunner = new SyrupJobRunner($this->getAppConfig(), $this->getLogger());
         }
-        $this->getLogger()->info(sprintf('Writer job "%d" succeeded', $job['id']));
+        $jobResult = $jobRunner->runJob(
+            $this->dbBackend->getWriterComponentName(),
+            $this->dbBackend->getWriterConfig()
+        );
+
+        $jobRunner->processingJobResult($jobResult);
+
         $this->getLogger()->info(sprintf(
             'Data has been written to schema assigned to Looker DB Connection "%s"',
             $this->getLookerConnectionName()
@@ -154,7 +149,7 @@ class Component extends BaseComponent
     protected function getAuthenticatedClient(string $accessToken): Client
     {
         $stack = HandlerStack::create();
-        $client = new Client(
+        return new Client(
             [
                 'headers' => [
                     'Authorization' => 'token ' . $accessToken,
@@ -162,7 +157,6 @@ class Component extends BaseComponent
                 'handler' => $stack,
             ]
         );
-        return $client;
     }
 
     private function getLookerConnectionName(): string
@@ -223,55 +217,6 @@ class Component extends BaseComponent
         }
     }
 
-    private function getSyrupClient(?int $backoffMaxTries = null): \Keboola\Syrup\Client
-    {
-        $config = [
-            'token' => $this->getAppConfig()->getStorageApiToken(),
-            'url' => $this->getSyrupUrl(),
-            'super' => 'docker',
-            'runId' => $this->getAppConfig()->getRunId(),
-        ];
-
-        if ($backoffMaxTries) {
-            $config['backoffMaxTries'] = $backoffMaxTries;
-        }
-
-        return new \Keboola\Syrup\Client($config);
-    }
-
-    private function getDockerRunnerUrl(): string
-    {
-        return $this->getServiceUrl('docker-runner');
-    }
-
-    private function getSyrupUrl(): string
-    {
-        return $this->getServiceUrl('syrup');
-    }
-
-    private function getServiceUrl(string $serviceId): string
-    {
-        $foundServices = array_values(array_filter($this->getServices(), function ($service) use ($serviceId) {
-            return $service['id'] === $serviceId;
-        }));
-        if (empty($foundServices)) {
-            throw new LookerWriterException(sprintf('%s service not found', $serviceId));
-        }
-        return $foundServices[0]['url'];
-    }
-
-    private function getServices(): array
-    {
-        if (!$this->services) {
-            $storageClient = new \Keboola\StorageApi\Client([
-                'token' => $this->getAppConfig()->getStorageApiToken(),
-                'url' => $this->getAppConfig()->getStorageApiUrl(),
-            ]);
-            $this->services = $storageClient->indexAction()['services'];
-        }
-        return $this->services;
-    }
-
     private function getLookerAccessToken(): string
     {
         if (!$this->lookerAccessToken) {
@@ -327,5 +272,13 @@ class Component extends BaseComponent
         return $this
             ->getDbCredentialsClient()
             ->createConnection($apiObject);
+    }
+
+    private function getStorageApiClient(): \Keboola\StorageApi\Client
+    {
+        return new \Keboola\StorageApi\Client([
+            'token' => $this->getAppConfig()->getStorageApiToken(),
+            'url' => $this->getAppConfig()->getStorageApiUrl(),
+        ]);
     }
 }

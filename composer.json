@@ -1,7 +1,11 @@
 {
+    "name": "keboola/looker-writer",
+    "description": "Writes data from Keboola Connection to looker",
+    "license": "MIT",
     "require": {
         "php": "^7.4",
         "ext-json": "*",
+        "keboola/job-queue-api-php-client": "^0.4.1",
         "keboola/looker-api": "^6.2.10",
         "keboola/php-component": "^8.1.2",
         "keboola/storage-api-client": "^10.2-",
