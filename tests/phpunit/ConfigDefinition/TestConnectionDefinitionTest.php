@@ -50,7 +50,7 @@ class TestConnectionDefinitionTest extends TestCase
         $updated = $fullConfig;
         unset($updated['parameters']['db']);
         yield 'missing db' => [
-            'The child node "db" at path "root.parameters" must be configured.',
+            'The child config "db" under "root.parameters" must be configured.',
             $updated,
         ];
 
