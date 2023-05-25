@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\LookerWriter\Exception;
 
-class LookerWriterException extends \Exception
+use Exception;
+
+class LookerWriterException extends Exception
 {
 }

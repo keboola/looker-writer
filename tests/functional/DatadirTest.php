@@ -77,7 +77,7 @@ class DatadirTest extends DatadirTestCase
         putenv('BIGQUERY_SA_CLIENT_X509_CERT_URL=' . $bigQueryDb['service_account']['client_x509_cert_url']);
     }
 
-    protected function runScript(string $datadirPath): Process
+    protected function runScript(string $datadirPath, ?string $runId = null): Process
     {
         $fs = new Filesystem();
 

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Keboola\LookerWriter;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
+use GuzzleHttp\HandlerStack;
 use Keboola\Component\BaseComponent;
 use Keboola\Component\UserException;
 use Keboola\LookerWriter\ConfigDefinition\Node\DbNodeDefinition;
@@ -17,6 +17,7 @@ use Keboola\LookerWriter\DbBackend\SnowflakeBackend;
 use Keboola\LookerWriter\Exception\LookerWriterException;
 use Keboola\LookerWriter\JobRunner\QueueV2JobRunner;
 use Keboola\LookerWriter\JobRunner\SyrupJobRunner;
+use Keboola\StorageApi\Client as SapiClient;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use Psr\Log\LoggerInterface;
@@ -274,9 +275,9 @@ class Component extends BaseComponent
             ->createConnection($apiObject);
     }
 
-    private function getStorageApiClient(): \Keboola\StorageApi\Client
+    private function getStorageApiClient(): SapiClient
     {
-        return new \Keboola\StorageApi\Client([
+        return new SapiClient([
             'token' => $this->getAppConfig()->getStorageApiToken(),
             'url' => $this->getAppConfig()->getStorageApiUrl(),
         ]);
