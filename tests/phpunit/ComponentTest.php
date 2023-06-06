@@ -17,12 +17,12 @@ class ComponentTest extends TestCase
 
     public function setUp(): void
     {
-        $this->markTestSkipped('Only for development');
         $config = new Config([]);
         $this->client = new Client([
             'token' => $config->getStorageApiToken(),
             'url' => $config->getStorageApiUrl(),
         ]);
+        $this->markTestSkipped('Only for development');
     }
 
     public function testWillConnect(): void

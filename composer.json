@@ -6,7 +6,7 @@
         "php": "^7.4",
         "ext-json": "*",
         "keboola/job-queue-api-php-client": "^0.4.1",
-        "keboola/looker-api": "^6.2.10",
+        "keboola/looker-api": "^7.0.0",
         "keboola/php-component": "^8.1.2",
         "keboola/storage-api-client": "^10.2-",
         "keboola/syrup-php-client": "^5.5"
@@ -38,7 +38,6 @@
             "@tests-phpunit",
             "@tests-datadir"
         ],
-
         "phpstan": "phpstan analyse ./src ./tests --level=max --no-progress -c phpstan.neon",
         "phpcs": "phpcs -n --ignore=vendor --extensions=php .",
         "phpcbf": "phpcbf -n --ignore=vendor --extensions=php .",
@@ -56,6 +55,9 @@
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

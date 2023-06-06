@@ -1,7 +1,5 @@
 # [Looker](https://looker.com) Writer
 
-[![Build Status](https://travis-ci.com/keboola/looker-writer.svg?branch=master)](https://travis-ci.com/keboola/looker-writer)
-
 > Allows user to load their data from Keboola Connection to Snowflake to use in Looker. 
 
 # Usage
@@ -132,7 +130,7 @@ docker-compose run --rm dev composer install --no-scripts
 - Create a project with Looker Writer config and Keboola Snowflake backend.
 - Create a BigQuery service account: https://console.developers.google.com -> `Credentials` -> `Service Accounts` -> `Keys`
 
-Following enviroment variables must be set:
+Following environment variables must be set:
 ```dotenv
 KBC_URL=https://connection.keboola.com/
 KBC_TOKEN=
