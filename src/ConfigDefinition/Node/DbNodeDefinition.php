@@ -103,6 +103,7 @@ class DbNodeDefinition extends ArrayNodeDefinition
                 ->cannotBeEmpty()
             ->end()
             ->arrayNode('service_account')
+            ->ignoreExtraKeys()
             ->children()
                 // All these values are part of BigQuery JSON certificate file
                 // and are used to create the Looker connection
