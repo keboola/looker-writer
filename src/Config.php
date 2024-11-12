@@ -386,4 +386,13 @@ class Config extends BaseConfig
             return false;
         }
     }
+
+    public function getRegion(): string
+    {
+        return $this->getValue([
+            'parameters',
+            'db',
+            'region',
+        ]);
+    }
 }

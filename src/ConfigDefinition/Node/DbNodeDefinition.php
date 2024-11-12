@@ -102,6 +102,8 @@ class DbNodeDefinition extends ArrayNodeDefinition
             ->scalarNode('dataset')
                 ->cannotBeEmpty()
             ->end()
+            ->scalarNode('region')
+                ->end()
             ->arrayNode('service_account')
             ->ignoreExtraKeys()
             ->children()

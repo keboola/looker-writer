@@ -65,6 +65,7 @@ class DatadirTest extends DatadirTestCase
             (string) getenv('BIGQUERY_BACKEND_PRIVATE_KEY');
         $bigQueryDb = $bigQueryParameters['db'];
         putenv('BIGQUERY_DATASET=' . $bigQueryDb['dataset']);
+        putenv('BIGQUERY_REGION=' . ($bigQueryDb['region'] ?? ''));
         putenv('BIGQUERY_SA_TYPE=' . $bigQueryDb['service_account']['type']);
         putenv('BIGQUERY_SA_PROJECT_ID=' . $bigQueryDb['service_account']['project_id']);
         putenv('BIGQUERY_SA_PRIVATE_KEY_ID=' . $bigQueryDb['service_account']['private_key_id']);
