@@ -103,16 +103,15 @@ jobs:
   tests-in-kbc:
     needs: build
     runs-on: ubuntu-latest
-    env:
-      TAG: ${{ needs.build.outputs.app_image_tag }}
     steps:
-      -
-        name: Check out the repo
-        uses: actions/checkout@v2
-      -
-        name: Run KBC test jobs
+      - name: Run KBC test jobs
         if: env.KBC_STORAGE_TOKEN && env.KBC_TEST_PROJECT_CONFIGS
-        run: ./kbctests.sh
+        uses: keboola/action-run-configs-parallel@master
+        with:
+          token: ${{ env.KBC_STORAGE_TOKEN }}
+          componentId: ${{ env.KBC_DEVELOPERPORTAL_APP }}
+          tag: ${{ needs.build.outputs.app_image_tag }}
+          configs: ${{ env.KBC_TEST_PROJECT_CONFIGS }}
 
   deploy:
     needs:
