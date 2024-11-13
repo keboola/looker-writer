@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\LookerWriter\Tests\DbBeckend;
 
 use Keboola\LookerWriter\Config;
