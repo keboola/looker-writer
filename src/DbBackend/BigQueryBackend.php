@@ -55,7 +55,7 @@ class BigQueryBackend implements DbBackend
                 'dataset' => $this->config->getBigQueryDataset(),
                 'service_account' => $this->config->getBigQueryServiceAccount(false),
                 'tables' => $this->config->getTables(),
-                'region' => $this->config->getRegion(),
+                'location' => $this->config->getLocation(),
             ],
         ];
     }

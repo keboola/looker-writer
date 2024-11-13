@@ -4,7 +4,7 @@
     "db": {
       "driver": "bigquery",
       "dataset": "%env(string:BIGQUERY_DATASET)%",
-      "region": "%env(string:BIGQUERY_REGION)%",
+      "location": "%env(string:BIGQUERY_LOCATION)%",
       "service_account": {
         "type": "%env(string:BIGQUERY_SA_TYPE)%",
         "project_id": "%env(string:BIGQUERY_SA_PROJECT_ID)%",

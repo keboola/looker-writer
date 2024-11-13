@@ -387,12 +387,12 @@ class Config extends BaseConfig
         }
     }
 
-    public function getRegion(): string
+    public function getLocation(): string
     {
         return $this->getValue([
             'parameters',
             'db',
-            'region',
+            'location',
         ]);
     }
 }
