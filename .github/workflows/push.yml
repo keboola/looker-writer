@@ -25,7 +25,7 @@ env:
   # Test KBC project
   KBC_STORAGE_TOKEN: ${{ secrets.KBC_STORAGE_TOKEN }}
   KBC_TEST_PROJECT_URL: "https://connection.keboola.com/admin/projects/8296"
-  KBC_TEST_PROJECT_CONFIGS: "638537315 636916992" # space separated list
+  KBC_TEST_PROJECT_CONFIGS: "" # space separated list
 jobs:
   build:
     runs-on: ubuntu-latest
