@@ -393,6 +393,6 @@ class Config extends BaseConfig
             'parameters',
             'db',
             'location',
-        ]);
+        ], '');
     }
 }
