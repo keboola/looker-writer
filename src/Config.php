@@ -386,4 +386,13 @@ class Config extends BaseConfig
             return false;
         }
     }
+
+    public function getLocation(): string
+    {
+        return $this->getValue([
+            'parameters',
+            'db',
+            'location',
+        ], '');
+    }
 }

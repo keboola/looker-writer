@@ -20,5 +20,7 @@ services:
 
   dev-xdebug:
     <<: *default
+    depends_on:
+      - dev
     build:
       context: docker/xdebug

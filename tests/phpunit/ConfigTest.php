@@ -103,6 +103,22 @@ class ConfigTest extends TestCase
         $this->assertSame('test-connection-name', $config->getConnectionName());
     }
 
+    public function testGetLocation(): void
+    {
+        $config = new Config(
+            [
+                'parameters' => [
+                    'db' => [
+                        'location' => 'us-east',
+                    ],
+                ],
+            ],
+            $this->getDummyConfigDefintion()
+        );
+
+        $this->assertSame('us-east', $config->getLocation());
+    }
+
     public function testGetEmptyConnectionName(): void
     {
         $config = new Config(

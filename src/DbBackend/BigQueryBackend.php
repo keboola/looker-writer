@@ -47,7 +47,7 @@ class BigQueryBackend implements DbBackend
 
     public function getWriterConfig(): array
     {
-        return [
+        $writerConfig = [
             'storage' => [
                 'input' => $this->config->getWriterInputMapping(),
             ],
@@ -57,5 +57,12 @@ class BigQueryBackend implements DbBackend
                 'tables' => $this->config->getTables(),
             ],
         ];
+
+        $location = $this->config->getLocation();
+        if ($location !== '') {
+            $writerConfig['parameters']['location'] = $location;
+        }
+
+        return $writerConfig;
     }
 }
